@@ -1,0 +1,304 @@
+﻿<UserControl x:Class="BetterStartPage.Control.ProjectGroupsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.12.0"
+             xmlns:viewModel="clr-namespace:BetterStartPage.Control.ViewModel"
+             xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             xmlns:control="clr-namespace:BetterStartPage.Control"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             Loaded="OnLoaded"    
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="400">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Microsoft.VisualStudio.Shell.12.0;component/ui/styles/startpageresources.xaml" />
+                <ResourceDictionary>
+                    <Style x:Key="StartPage.LinkButtonStyle" TargetType="{x:Type ui:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ui:ImageButton}">
+                                    <TextBlock x:Name="PART_Text" 
+                                                Text="{TemplateBinding Content}"
+                                                VerticalAlignment="Center" Style="{StaticResource StartPage.NormalTextStyle}"
+                                                Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
+                                                FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}">
+                                    </TextBlock>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="UIElement.IsMouseOver" Value="true">
+                                            <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+                                            <Setter TargetName="PART_Text"
+                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Property="TextBlock.Foreground"/>
+                                        </Trigger>
+                                        <Trigger Property="UIElement.IsFocused" Value="true">
+                                            <Setter TargetName="PART_Text"
+                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Property="TextBlock.Foreground"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style x:Key="StartPage.ProjectCommand.ActionButtonStyle" TargetType="{x:Type ui:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ui:ImageButton}">
+                                    <Border x:Name="PART_Border" VerticalAlignment="Center">
+                                        <Image x:Name="PART_Image" Source="{Binding ImageNormal, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Width="16" Height="16"
+                                                Stretch="Uniform" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="UIElement.IsMouseOver" Value="true">
+                                            <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+                                            <Setter TargetName="PART_Border"
+                                                  Value="{Binding BackgroundHover, RelativeSource={RelativeSource TemplatedParent}}"
+                                                  Property="Border.Background"/>
+                                        </Trigger>
+                                        <Trigger Property="ButtonBase.IsPressed" Value="true">
+                                            <Setter TargetName="PART_Border"
+                                                      Value="{Binding BackgroundPressed, RelativeSource={RelativeSource TemplatedParent}}"
+                                                      Property="Border.Background"/>
+                                        </Trigger>
+                                        <Trigger Property="UIElement.IsFocused" Value="true">
+                                            <Setter TargetName="PART_Border"
+                                                  Value="{Binding BackgroundHover, RelativeSource={RelativeSource TemplatedParent}}"
+                                                  Property="Border.Background"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style x:Key="StartPage.ProjectCommand.ProjectStyle" TargetType="{x:Type ui:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ui:ImageButton}">
+                                    <Grid VerticalAlignment="Top">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border x:Name="PART_Border" Grid.Column="0" VerticalAlignment="Center">
+                                            <Image x:Name="PART_Image" Source="{Binding ImageNormal, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        </Border>
+                                        <TextBlock x:Name="PART_Text" Grid.Column="1" 
+                                                   Margin="8,0,0,0" 
+                                                   VerticalAlignment="Center" Style="{StaticResource StartPage.NormalTextStyle}"
+                                                   Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
+                                                   FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}">
+                                            <TextBlock x:Name="PART_Name" 
+                                                       Text="{Binding Name}" 
+                                                       TextWrapping="NoWrap"/>
+                                            <TextBlock x:Name="PART_DirectoryName" 
+                                                       Style="{DynamicResource StartPage.HeadingTextStyle}"
+                                                       Text="{Binding DirectoryName}"
+                                                       TextWrapping="NoWrap"/>
+                                        </TextBlock>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="UIElement.IsMouseOver" Value="true">
+                                            <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+                                            <Setter TargetName="PART_Text"
+                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Property="TextBlock.Foreground"/>
+                                        </Trigger>
+                                        <Trigger Property="UIElement.IsFocused" Value="true">
+                                            <Setter TargetName="PART_Text"
+                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Property="TextBlock.Foreground"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            <control:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
+            <Style x:Key="DiscoverTitleTextBoxStyle" TargetType="TextBox">
+                <Setter Property="Foreground"
+                        Value="{DynamicResource {x:Static ui:StartPageColors.DiscoverTitleTextBrushKey}}"/>
+                <Setter Property="ui:FontScaling.PreScaledFontSize"
+                        Value="{DynamicResource VsFont.EnvironmentFontSize}"/>
+                <Setter Property="TextBlock.FontFamily"
+                        Value="Segoe UI Light, Segoe UI"/>
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <Binding Path="(ui:FontScaling.PreScaledFontSize)" RelativeSource="{RelativeSource Self}">
+                            <Binding.Converter>
+                                <ui:MultiplicationConverter MultiplicationFactor="2.3"/>
+                            </Binding.Converter>
+                        </Binding>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <DataTemplate x:Key="DropShadowTemplate">
+                <Grid Background="#32000000">
+                </Grid>
+            </DataTemplate>
+            <Style x:Key="ProjectGroupGrid" TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="MinHeight" Value="100" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem IsCheckable="true" IsChecked="{Binding IsEditMode}" Header="Edit Mode" />
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ItemsControl ItemsSource="{Binding Groups}" Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <control:AdvancedGrid
+                        control:AutoGridHelper.Attach="True"
+                        control:AutoGridHelper.Columns="{Binding GroupColumns}"
+                        control:AutoGridHelper.Rows="{Binding GroupRows}">
+                    </control:AdvancedGrid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModel:ProjectGroup">
+                    <control:GridFileDragAndDropDecorator HorizontalAlignment="Stretch" 
+                                                          AllowDrop="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                          DataTemplate="{StaticResource DropShadowTemplate}" 
+                                                          DefaultDropEffect="Link"
+                                                          FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                          FilesDroppedCommandParameter="{Binding}"
+                                                          >
+                        <Grid Style="{StaticResource ProjectGroupGrid}" HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Margin="0,30,0,5">
+                                <TextBlock Style="{DynamicResource StartPage.DiscoverTitleTextStyle}" Text="{Binding Title}" AllowDrop="True" />
+                                <Grid Grid.Row="0" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource boolToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource DiscoverTitleTextBoxStyle}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
+                                        <ui:ImageButton
+                                ToolTip="Delete"
+                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                Command="{Binding DataContext.DeleteGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/DeleteHS.png"
+                                />
+                                        <ui:ImageButton
+                                ToolTip="Move Up"
+                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                Command="{Binding DataContext.MoveGroupUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/arrow_Up_16xLG.png"
+                                />
+                                        <ui:ImageButton
+                                ToolTip="Move Down"
+                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                Command="{Binding DataContext.MoveGroupDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/arrow_Down_16xLG.png"
+                                />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+
+                            <ItemsControl ItemsSource="{Binding Projects}" Grid.Row="1" Name="Projects">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="viewModel:Project">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:ImageButton
+                                            Margin="5"
+                                            Style="{StaticResource StartPage.ProjectCommand.ProjectStyle}" 
+                                            ImageNormal="{Binding FullName, Converter={StaticResource PathToSystemIconConverter}}"
+                                            Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource boolToVisibilityConverter}}">
+                                                <ui:ImageButton
+                                                ToolTip="Delete"
+                                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                                Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/DeleteHS.png"
+                                                />
+                                                <ui:ImageButton
+                                                ToolTip="Move Up"
+                                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                                Command="{Binding DataContext.MoveProjectUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/arrow_Up_16xLG.png"
+                                                />
+                                                <ui:ImageButton
+                                                ToolTip="Move Down"
+                                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                                Command="{Binding DataContext.MoveProjectDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/arrow_Down_16xLG.png"
+                                                />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </control:GridFileDragAndDropDecorator>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,5,5,30" Visibility="{Binding IsEditMode, Converter={StaticResource boolToHiddenVisibilityConverter}}">
+            <Label>Columns</Label>
+            <xctk:IntegerUpDown Minimum="1" Value="{Binding GroupColumns}"/>
+            <ui:ImageButton 
+                Margin="5,0,0,0"
+                Style="{StaticResource StartPage.LinkButtonStyle}"
+                Content="New Group"
+                Command="{Binding AddGroupCommand}"
+                />
+        </StackPanel>
+
+    </Grid>
+
+    <!--<Border Margin="20" CornerRadius="10" BorderThickness="3" BorderBrush="{DynamicResource {x:Static vsfx:VsBrushes.StartPageSeparatorKey}}">-->
+    <!--<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextBodyKey}}">
+                <TextBlock Text="My Start Page Control" FontSize="18" HorizontalAlignment="Center"/>
+                -->
+    <!-- Start Page tool window DataContext includes Visual Studio DTE for accessing Visual Studio properties and services. -->
+    <!--
+                <TextBlock Text="{Binding Path=DTE.Name}" FontSize="12" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+        </Grid>-->
+</UserControl>

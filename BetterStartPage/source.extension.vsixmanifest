@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
+  <Identifier Id="E6BD5606-CCEC-4364-B60B-8FB70BA3575B">
+    <Name>BetterStartPage</Name>
+    <Author>Danielku15</Author>
+    <Version>1.0</Version>
+    <Description xml:space="preserve">
+This is a VS2013 like start page which replaces the news section by a custom project dashboard.
+In the project dashboard you can organize your solutions and projects into different groups for fast access. 
+
+To edit the dashboard right-click on the empty area and enable the edit mode in the context menu. 
+Add new groups by clicking on the "Add Group" link on the bottom, add new projects to the group by dragging Solution or Project files from the explorer to the groups. 
+You can reorder or delete groups and projects by using the action buttons beside the items. 
+    </Description>
+    <Locale>1033</Locale>
+    <Icon>StartPage.png</Icon>
+    <PreviewImage>StartPagePreview.png</PreviewImage>
+    <License>License.txt</License>
+    <GettingStartedGuide>GettingStarted.md</GettingStartedGuide>
+    <ReleaseNotes>ReleaseNotes.md</ReleaseNotes>
+    <MoreInfoUrl>https://github.com/Danielku15/BetterStartPage</MoreInfoUrl>
+    <SupportedProducts>
+      <VisualStudio Version="12.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+    </SupportedProducts>
+    <SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="4.5" />
+  </Identifier>
+  <References />
+  <Content>
+    <CustomExtension Type="StartPage">StartPage.xaml</CustomExtension>
+    <VsPackage>StartPage.pkgdef</VsPackage>
+  </Content>
+</Vsix>
