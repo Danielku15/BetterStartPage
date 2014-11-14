@@ -124,8 +124,6 @@
             </ResourceDictionary.MergedDictionaries>
             <control:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
             <Style x:Key="DiscoverTitleTextBoxStyle" TargetType="TextBox">
-                <Setter Property="Foreground"
-                        Value="{DynamicResource {x:Static ui:StartPageColors.DiscoverTitleTextBrushKey}}"/>
                 <Setter Property="ui:FontScaling.PreScaledFontSize"
                         Value="{DynamicResource VsFont.EnvironmentFontSize}"/>
                 <Setter Property="TextBlock.FontFamily"
@@ -279,7 +277,7 @@
         </ItemsControl>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,5,5,30" Visibility="{Binding IsEditMode, Converter={StaticResource boolToHiddenVisibilityConverter}}">
-            <Label>Columns</Label>
+            <Label Foreground="{DynamicResource {x:Static ui:StartPageColors.StartPageCheckBoxTextBrushKey}}">Columns</Label>
             <xctk:IntegerUpDown Minimum="1" Value="{Binding GroupColumns}"/>
             <ui:ImageButton 
                 Margin="5,0,0,0"
