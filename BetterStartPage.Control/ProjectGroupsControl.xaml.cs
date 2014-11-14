@@ -89,5 +89,13 @@ namespace BetterStartPage.Control
             return MessageBox.Show(text, "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question,
                     MessageBoxResult.No) == MessageBoxResult.Yes;
         }
+
+        public void OpenFile(string name)
+        {
+            if (_ide != null)
+            {
+                _ide.ExecuteCommand("File.OpenFile", name);
+            }
+        }
     }
 }

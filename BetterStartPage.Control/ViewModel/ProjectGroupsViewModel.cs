@@ -67,6 +67,7 @@ namespace BetterStartPage.Control.ViewModel
         }
 
         public ICommand OpenProjectCommand { get; private set; }
+        public ICommand OpenAllFilesCommand { get; private set; }
 
         public ICommand AddGroupCommand { get; private set; }
         public ICommand DeleteGroupCommand { get; private set; }
@@ -82,6 +83,7 @@ namespace BetterStartPage.Control.ViewModel
         {
             _ideAccess = ideAccess;
             OpenProjectCommand = new RelayCommand<Project>(OpenProject);
+            OpenAllFilesCommand = new RelayCommand<ProjectGroup>(OpenAllFiles);
             AddGroupCommand = new RelayCommand(NewGroup);
             DeleteGroupCommand = new RelayCommand<ProjectGroup>(DeleteGroup);
             MoveGroupUpCommand = new RelayCommand<ProjectGroup>(MoveGroupUp);
@@ -93,10 +95,24 @@ namespace BetterStartPage.Control.ViewModel
             MoveProjectDownCommand = new RelayCommand<Project>(MoveProjectDown);
         }
 
+        private void OpenAllFiles(ProjectGroup group)
+        {
+            foreach (var project in group.Projects.Where(p=>p.IsNormalFile))
+            {
+                OpenProject(project);
+            }
+        }
 
         private void OpenProject(Project project)
         {
-            _ideAccess.OpenProject(project.FullName);
+            if (project.IsNormalFile)
+            {
+                _ideAccess.OpenFile(project.FullName);
+            }
+            else
+            {
+                _ideAccess.OpenProject(project.FullName);
+            }
         }
 
         private void UpdateGroupRows()
@@ -114,7 +130,7 @@ namespace BetterStartPage.Control.ViewModel
             var existingProjects = new HashSet<string>(group.Projects.Select(p => p.FullName), StringComparer.InvariantCultureIgnoreCase);
 
             var projects = files
-                .Where(f => IsValidProjectFile(f) && !existingProjects.Contains(f))
+                .Where(f => !existingProjects.Contains(f))
                 .Select(f => new Project(f));
 
             var groupProjects = (ObservableCollection<Project>)group.Projects;
@@ -159,15 +175,6 @@ namespace BetterStartPage.Control.ViewModel
             {
                 ((IList<Project>)group.Projects).Remove(project);
             }
-        }
-
-        private bool IsValidProjectFile(string s)
-        {
-            var extension = Path.GetExtension(s);
-            if (extension == null) return false;
-            if (extension.EndsWith(".sln", StringComparison.InvariantCultureIgnoreCase)) return true;
-            if (extension.EndsWith("proj", StringComparison.InvariantCultureIgnoreCase)) return true;
-            return false;
         }
 
         #endregion

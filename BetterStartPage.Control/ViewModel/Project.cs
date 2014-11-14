@@ -35,6 +35,18 @@ namespace BetterStartPage.Control.ViewModel
             }
         }
 
+        public bool IsNormalFile
+        {
+            get
+            {
+                var extension = Path.GetExtension(Name);
+                if (extension == null) return true;
+                if (extension.EndsWith(".sln", StringComparison.InvariantCultureIgnoreCase)) return false;
+                if (extension.EndsWith("proj", StringComparison.InvariantCultureIgnoreCase)) return false;
+                return true;
+            }
+        }
+
         public Project()
         {
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -12,6 +14,7 @@ namespace BetterStartPage.Control.ViewModel
     {
         private string _title;
         private IEnumerable<Project> _projects;
+        private bool _hasNormalFiles;
 
         [DataMember]
         public string Title
@@ -33,6 +36,28 @@ namespace BetterStartPage.Control.ViewModel
             {
                 if (Equals(value, _projects)) return;
                 _projects = value;
+                OnPropertyChanged();
+                var projects = value as INotifyCollectionChanged;
+                if (projects != null)
+                {
+                    projects.CollectionChanged += OnProjectsChanged;
+                }
+                OnProjectsChanged(value, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
+        }
+
+        private void OnProjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            HasNormalFiles = _projects.Any(p => p.IsNormalFile);
+        }
+
+        public bool HasNormalFiles
+        {
+            get { return _hasNormalFiles; }
+            set
+            {
+                if (value.Equals(_hasNormalFiles)) return;
+                _hasNormalFiles = value;
                 OnPropertyChanged();
             }
         }

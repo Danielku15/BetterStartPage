@@ -186,10 +186,22 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <Grid Margin="0,30,0,5">
-                                <TextBlock Style="{DynamicResource StartPage.DiscoverTitleTextStyle}" Text="{Binding Title}" AllowDrop="True" />
+                                <StackPanel Orientation="Horizontal" AllowDrop="True">
+                                    <TextBlock Style="{DynamicResource StartPage.DiscoverTitleTextStyle}" Text="{Binding Title}"  />
+                                    <ui:ImageButton 
+                                        Margin="5"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource StartPage.LinkButtonStyle}"
+                                        Content="Open all files"
+                                        Command="{Binding DataContext.OpenAllFilesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding HasNormalFiles, Converter={StaticResource boolToVisibilityConverter}}"
+                                        />
+                                </StackPanel>
                                 <Grid Grid.Row="0" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource boolToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -270,6 +282,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+
                         </Grid>
                     </control:GridFileDragAndDropDecorator>
                 </DataTemplate>

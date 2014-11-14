@@ -4,5 +4,6 @@
     {
         void OpenProject(string name);
         bool ShowDeleteConfirmation(string text);
+        void OpenFile(string name);
     }
 }
