@@ -26,9 +26,3 @@ You can reorder or delete groups and projects by using the action buttons beside
 - adjust the number of group columns you want to have
 - use the action buttons to reorder or delete items 
 - right click on the empty area and disable the edit mode to save your layout 
-
-# Release Notes 
-
-## 1.0
-
-- Initial Release
