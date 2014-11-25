@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using BetterStartPage.Control.Settings;
 using BetterStartPage.Control.ViewModel;
 using EnvDTE80;
@@ -63,38 +62,6 @@ namespace BetterStartPage.Control
                 {
                     SettingsProvider.Reset();
                 }
-            }
-        }
-    }
-
-    internal class VsIdeAccess : IIdeAccess
-    {
-        private readonly DTE2 _ide;
-
-        public VsIdeAccess(DTE2 ide)
-        {
-            _ide = ide;
-        }
-
-        public void OpenProject(string name)
-        {
-            if (_ide != null)
-            {
-                _ide.ExecuteCommand("File.OpenProject", String.Format("\"{0}\"", name));
-            }
-        }
-
-        public bool ShowDeleteConfirmation(string text)
-        {
-            return MessageBox.Show(text, "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question,
-                    MessageBoxResult.No) == MessageBoxResult.Yes;
-        }
-
-        public void OpenFile(string name)
-        {
-            if (_ide != null)
-            {
-                _ide.ExecuteCommand("File.OpenFile", String.Format("\"{0}\"", name));
             }
         }
     }

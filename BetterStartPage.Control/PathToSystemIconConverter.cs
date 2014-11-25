@@ -47,7 +47,7 @@ namespace BetterStartPage.Control
         {
             // if file does not exist, create a temp file with the same file extension
             var isTemp = false;
-            if (!File.Exists(fileName))
+            if (!File.Exists(fileName) && !Directory.Exists(fileName))
             {
                 isTemp = true;
                 fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + Path.GetExtension(fileName));

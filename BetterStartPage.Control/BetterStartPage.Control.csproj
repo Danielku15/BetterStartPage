@@ -95,6 +95,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="VsIdeAccess.cs" />
     <Page Include="ProjectGroupsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

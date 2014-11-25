@@ -1,6 +1,7 @@
 # 1.2
 
 - Fixed Issue #5: Opening Projects and Files with spaces failed
+- Support opening directories
 
 # 1.1
 
