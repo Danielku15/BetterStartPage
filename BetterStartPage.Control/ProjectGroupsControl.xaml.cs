@@ -80,7 +80,7 @@ namespace BetterStartPage.Control
         {
             if (_ide != null)
             {
-                _ide.ExecuteCommand("File.OpenProject", name);
+                _ide.ExecuteCommand("File.OpenProject", String.Format("\"{0}\"", name));
             }
         }
 
@@ -94,7 +94,7 @@ namespace BetterStartPage.Control
         {
             if (_ide != null)
             {
-                _ide.ExecuteCommand("File.OpenFile", name);
+                _ide.ExecuteCommand("File.OpenFile", String.Format("\"{0}\"", name));
             }
         }
     }
