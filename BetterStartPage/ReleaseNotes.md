@@ -1,3 +1,7 @@
+# 1.2
+
+- Fixed Issue #5: Opening Projects and Files with spaces failed
+
 # 1.1
 
 - Fixed Issue #3: Wrong textbox coloring in edit mode

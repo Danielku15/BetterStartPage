@@ -3,7 +3,7 @@
   <Identifier Id="E6BD5606-CCEC-4364-B60B-8FB70BA3575B">
     <Name>BetterStartPage</Name>
     <Author>Danielku15</Author>
-    <Version>1.1</Version>
+    <Version>1.2</Version>
     <Description xml:space="preserve">
 This is a VS2013 like start page which replaces the news section by a custom project dashboard.
 In the project dashboard you can organize your solutions and projects into different groups for fast access. 
