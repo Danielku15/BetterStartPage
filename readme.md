@@ -14,7 +14,7 @@ You can reorder or delete groups and projects by using the action buttons beside
 
 ## Installation
 
-- Install the VSIX Package
+- Install the Extension from the [Visual Studio Extension Gallery](https://visualstudiogallery.msdn.microsoft.com/8da4b080-2ad6-47fd-a1ff-4e7cc185523b)
 - Go to Tools->Options->Environment->Startup and select the BetterStartPage as start page. 
 
 ## Basic Usage
