@@ -72,9 +72,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdvancedGrid.cs" />
@@ -84,6 +81,7 @@
     <Compile Include="FilesDroppedEventArgs.cs" />
     <Compile Include="GridFileDragAndDropDecorator.cs" />
     <Compile Include="IIdeAccess.cs" />
+    <Compile Include="IntegerValueConverter.cs" />
     <Compile Include="PathToSystemIconConverter.cs" />
     <Compile Include="Settings\ISettingsProvider.cs" />
     <Compile Include="Settings\DummySettingsProvider.cs" />
@@ -123,7 +121,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

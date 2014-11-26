@@ -24,7 +24,8 @@ namespace BetterStartPage.Control.ViewModel
             private set
             {
                 if (value == _groupColumns) return;
-                _groupColumns = value;
+                _groupColumns = Math.Max(1, value);
+                ((RelayCommand) DecreaseGroupColumnsCommand).RaiseCanExecuteChanged();
                 UpdateGroupRows();
                 OnPropertyChanged();
             }
@@ -79,6 +80,9 @@ namespace BetterStartPage.Control.ViewModel
         public ICommand MoveProjectUpCommand { get; private set; }
         public ICommand MoveProjectDownCommand { get; private set; }
 
+        public ICommand IncreaseGroupColumnsCommand { get; private set; }
+        public ICommand DecreaseGroupColumnsCommand { get; private set; }
+
         public ProjectGroupsViewModel(IIdeAccess ideAccess)
         {
             _ideAccess = ideAccess;
@@ -93,11 +97,24 @@ namespace BetterStartPage.Control.ViewModel
             DeleteProjectCommand = new RelayCommand<Project>(DeleteProject);
             MoveProjectUpCommand = new RelayCommand<Project>(MoveProjectUp);
             MoveProjectDownCommand = new RelayCommand<Project>(MoveProjectDown);
+
+            IncreaseGroupColumnsCommand = new RelayCommand(IncreaseGroupColumns);
+            DecreaseGroupColumnsCommand = new RelayCommand(DecreaseGroupColumns, () => GroupColumns > 1);
+        }
+
+        private void DecreaseGroupColumns()
+        {
+            GroupColumns--;
+        }
+
+        private void IncreaseGroupColumns()
+        {
+            GroupColumns++;
         }
 
         private void OpenAllFiles(ProjectGroup group)
         {
-            foreach (var project in group.Projects.Where(p=>p.IsNormalFile))
+            foreach (var project in group.Projects.Where(p => p.IsNormalFile))
             {
                 OpenProject(project);
             }
