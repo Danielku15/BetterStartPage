@@ -1,3 +1,7 @@
+# 1.3
+
+- Support adding and opening HTTP Urls 
+
 # 1.2
 
 - Fixed Issue #5: Opening Projects and Files with spaces failed
