@@ -1,6 +1,7 @@
 # 1.3
 
 - Support adding and opening HTTP Urls 
+- Removed Xceed WPF Toolkit dependency
 
 # 1.2
 
