@@ -90,6 +90,7 @@
                                         </Border>
                                         <TextBlock x:Name="PART_Text" Grid.Column="1" 
                                                    Margin="8,0,0,0" 
+                                                   ToolTip="{Binding FullName}"
                                                    VerticalAlignment="Center" Style="{StaticResource StartPage.NormalTextStyle}"
                                                    Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
                                                    FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}">

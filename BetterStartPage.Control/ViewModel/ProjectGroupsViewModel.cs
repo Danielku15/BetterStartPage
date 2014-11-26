@@ -25,7 +25,7 @@ namespace BetterStartPage.Control.ViewModel
             {
                 if (value == _groupColumns) return;
                 _groupColumns = Math.Max(1, value);
-                ((RelayCommand) DecreaseGroupColumnsCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)DecreaseGroupColumnsCommand).RaiseCanExecuteChanged();
                 UpdateGroupRows();
                 OnPropertyChanged();
             }
@@ -147,7 +147,7 @@ namespace BetterStartPage.Control.ViewModel
             var existingProjects = new HashSet<string>(group.Projects.Select(p => p.FullName), StringComparer.InvariantCultureIgnoreCase);
 
             var projects = files
-                .Where(f => !existingProjects.Contains(f))
+                .Where(f => !existingProjects.Contains(f) && IsSupportedUri(f))
                 .Select(f => new Project(f));
 
             var groupProjects = (ObservableCollection<Project>)group.Projects;
@@ -155,6 +155,11 @@ namespace BetterStartPage.Control.ViewModel
             {
                 groupProjects.Add(project);
             }
+        }
+
+        private bool IsSupportedUri(string s)
+        {
+            return File.Exists(s) || Directory.Exists(s) || Utilities.IsHttp(s);
         }
 
         private void MoveProjectDown(Project project)

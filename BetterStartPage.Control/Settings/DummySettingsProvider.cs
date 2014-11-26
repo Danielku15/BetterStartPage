@@ -16,32 +16,32 @@ namespace BetterStartPage.Control.Settings
             {
                 new ProjectGroup
                 {
-                    Title = "Spider Trunk",
+                    Title = "MyProject Trunk",
                     Projects = new[]
                     {
-                        new Project(@"C:\PerfProjects\Spider\SBC\src\SBC.sln"),
-                        new Project(@"C:\PerfProjects\Spider\Spider.All.sln"),
-                        new Project(@"C:\PerfProjects\Spider\Spider.Logging.sln"),
-                        new Project(@"C:\PerfProjects\Spider\Spider.Tools.sln"),
+                        new Project(@"C:\GitProjects\MyProject\Test.sln"),
+                        new Project(@"C:\GitProjects\MyProject\All.sln"),
+                        new Project(@"C:\GitProjects\MyProject\Logging.sln"),
+                        new Project(@"C:\GitProjects\MyProject\Tools.sln"),
                     }
                 },
                 new ProjectGroup
                 {
-                    Title = "Spider 5.1",
+                    Title = "MyProject 5.1",
                     Projects = new[]
                     {
-                        new Project(@"C:\PerfProjects\Spider5.1\SBC\src\SBC.sln"),
+                        new Project(@"C:\GitProjects\MyProject5.1\Logging.sln"),
                     }
                 },
                 new ProjectGroup
                 {
-                    Title = "Spider 5.0",
+                    Title = "MyProject 5.0",
                     Projects = new[]
                     {
-                        new Project(@"C:\PerfProjects\Spider5.0\SBC\src\SBC.sln"),
-                        new Project(@"C:\PerfProjects\Spider5.0\Spider.All.sln"),
-                        new Project(@"C:\PerfProjects\Spider5.0\Spider.Logging.sln"),
-                        new Project(@"C:\PerfProjects\Spider5.0\Spider.Tools.sln"),
+                        new Project(@"C:\GitProjects\MyProject5.0\Test.sln"),
+                        new Project(@"C:\GitProjects\MyProject5.0\All.sln"),
+                        new Project(@"C:\GitProjects\MyProject5.0\Logging.sln"),
+                        new Project(@"C:\GitProjects\MyProject5.0\Tools.sln"),
                     }
                 }
             });

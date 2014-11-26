@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,8 +9,6 @@ namespace BetterStartPage.Control
 {
     class GridFileDragAndDropDecorator : BaseDecorator
     {
-        private bool _isMouseDown;
-        private bool _isDragging;
         private DragAdorner _itemAdorner;
 
         public static readonly DependencyProperty DefaultDropEffectProperty = DependencyProperty.Register(
@@ -24,49 +21,48 @@ namespace BetterStartPage.Control
         }
 
         public static readonly DependencyProperty DataTemplateProperty = DependencyProperty.Register(
-            "DataTemplate", typeof (DataTemplate), typeof (GridFileDragAndDropDecorator), new PropertyMetadata(default(DataTemplate)));
+            "DataTemplate", typeof(DataTemplate), typeof(GridFileDragAndDropDecorator), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate DataTemplate
         {
-            get { return (DataTemplate) GetValue(DataTemplateProperty); }
+            get { return (DataTemplate)GetValue(DataTemplateProperty); }
             set { SetValue(DataTemplateProperty, value); }
         }
 
         public static readonly DependencyProperty FilesDroppedCommandProperty = DependencyProperty.Register(
-            "FilesDroppedCommand", typeof (ICommand), typeof (GridFileDragAndDropDecorator), new PropertyMetadata(default(ICommand)));
+            "FilesDroppedCommand", typeof(ICommand), typeof(GridFileDragAndDropDecorator), new PropertyMetadata(default(ICommand)));
 
         public ICommand FilesDroppedCommand
         {
-            get { return (ICommand) GetValue(FilesDroppedCommandProperty); }
+            get { return (ICommand)GetValue(FilesDroppedCommandProperty); }
             set { SetValue(FilesDroppedCommandProperty, value); }
         }
 
         public static readonly DependencyProperty FilesDroppedCommandParameterProperty = DependencyProperty.Register(
-            "FilesDroppedCommandParameter", typeof (object), typeof (GridFileDragAndDropDecorator), new PropertyMetadata(default(object)));
+            "FilesDroppedCommandParameter", typeof(object), typeof(GridFileDragAndDropDecorator), new PropertyMetadata(default(object)));
 
         public object FilesDroppedCommandParameter
         {
-            get { return (object) GetValue(FilesDroppedCommandParameterProperty); }
+            get { return GetValue(FilesDroppedCommandParameterProperty); }
             set { SetValue(FilesDroppedCommandParameterProperty, value); }
         }
 
         public GridFileDragAndDropDecorator()
-            : base()
         {
-            _isMouseDown = false;
-            _isDragging = false;
             Loaded += OnLoaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!(base.DecoratedUIElement is Grid))
+            if (!(DecoratedUIElement is Grid))
             {
                 throw new InvalidCastException(string.Format("GridFileDragAndDropDecorator cannot have child of type {0}", Child.GetType()));
             }
             var grid = (Grid)DecoratedUIElement;
-            var allowDropBinding = new Binding("AllowDrop");
-            allowDropBinding.Source = this;
+            var allowDropBinding = new Binding("AllowDrop")
+            {
+                Source = this
+            };
             grid.SetBinding(AllowDropProperty, allowDropBinding);
             grid.PreviewDrop += OnPreviewDrop;
             grid.PreviewQueryContinueDrag += OnPreviewQueryContinueDrag;
@@ -87,7 +83,13 @@ namespace BetterStartPage.Control
             if (!AllowDrop) return; var grid = (Grid)sender;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                var data = (string[]) e.Data.GetData(DataFormats.FileDrop);
+                var data = (string[])e.Data.GetData(DataFormats.FileDrop);
+                InitializeDragAdorner(grid, data);
+            }
+            else if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                var data = e.Data.GetData(DataFormats.Text).ToString()
+                                    .Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 InitializeDragAdorner(grid, data);
             }
             e.Handled = true;
@@ -95,7 +97,7 @@ namespace BetterStartPage.Control
 
         private void OnPreviewQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-            if (!AllowDrop) return; 
+            if (!AllowDrop) return;
             if (e.EscapePressed)
             {
                 e.Action = DragAction.Cancel;
@@ -111,6 +113,18 @@ namespace BetterStartPage.Control
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var itemsToAdd = (string[])e.Data.GetData(DataFormats.FileDrop);
+                e.Effects = DefaultDropEffect;
+
+                var data = new FilesDroppedEventArgs(FilesDroppedCommandParameter, itemsToAdd);
+                if (FilesDroppedCommand != null && FilesDroppedCommand.CanExecute(data))
+                {
+                    FilesDroppedCommand.Execute(data);
+                }
+            }
+            else if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                var itemsToAdd = e.Data.GetData(DataFormats.Text).ToString()
+                                    .Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 e.Effects = DefaultDropEffect;
 
                 var data = new FilesDroppedEventArgs(FilesDroppedCommandParameter, itemsToAdd);
@@ -161,8 +175,6 @@ namespace BetterStartPage.Control
 
         private void ResetState(Grid grid)
         {
-            _isMouseDown = false;
-            _isDragging = false;
             grid.AllowDrop = AllowDrop;
         }
     }

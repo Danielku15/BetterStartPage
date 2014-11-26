@@ -7,28 +7,46 @@ namespace BetterStartPage.Control.ViewModel
     [DataContract]
     class Project : ViewModelBase
     {
-        private FileInfo _fileInfo;
+        private Uri _fileInfo;
 
         public string Name
         {
             get
             {
-                return _fileInfo.Name;
+                if (_fileInfo.IsFile)
+                {
+                    return Path.GetFileName(FullName);
+                }
+                return _fileInfo.Host;
             }
         }
 
         public string DirectoryName
         {
-            get { return _fileInfo.DirectoryName; }
+            get
+            {
+                if (_fileInfo.IsFile)
+                {
+                    return Path.GetDirectoryName(FullName);
+                }
+                return _fileInfo.ToString();
+            }
         }
 
         [DataMember]
         public string FullName
         {
-            get { return _fileInfo.FullName; }
+            get
+            {
+                if (_fileInfo.IsFile)
+                {
+                    return _fileInfo.LocalPath;
+                }
+                return _fileInfo.ToString();
+            }
             set
             {
-                _fileInfo = new FileInfo(value);
+                _fileInfo = new Uri(value);
                 OnPropertyChanged();
                 OnPropertyChanged("Name");
                 OnPropertyChanged("DirectoryName");

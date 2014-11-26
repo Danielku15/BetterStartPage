@@ -32,9 +32,12 @@ namespace BetterStartPage.Control
 
         private object ConvertFromCache(string fileName)
         {
-            var extension = Path.GetExtension(fileName);
-            if (extension == null) return null;
+            if (Utilities.IsHttp(fileName))
+            {
+                fileName = "test.url";
+            }
 
+            var extension = Path.GetExtension(fileName);
             if (!_imageCache.ContainsKey(extension))
             {
                 _imageCache[extension] = GetFileIcon(fileName);

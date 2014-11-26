@@ -34,7 +34,7 @@ namespace BetterStartPage.Control
         {
             if (_ide != null)
             {
-                if (Directory.Exists(name))
+                if (Utilities.IsHttp(name) || Directory.Exists(name))
                 {
                     Process.Start(name);
                 }

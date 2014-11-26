@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using EnvDTE;
 using EnvDTE80;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
@@ -22,7 +22,7 @@ namespace BetterStartPage.Control
                 PropertyDescriptorCollection propertyCollection = typeDescriptor.GetProperties();
                 return propertyCollection.Find("DTE", false).GetValue(dataContext) as DTE2;
             }
-            
+
             var dataSource = dataContext as DataSource;
             if (dataSource != null)
             {
@@ -36,6 +36,12 @@ namespace BetterStartPage.Control
         public static ServiceProvider GetServiceProvider(DTE2 dte)
         {
             return new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte);
+        }
+
+        public static bool IsHttp(string fileName)
+        {
+            return (fileName.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+                    || fileName.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }
