@@ -1,4 +1,4 @@
-﻿<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
       xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.12.0"
@@ -6,129 +6,130 @@
       xmlns:control="clr-namespace:BetterStartPage.Control;assembly=BetterStartPage.Control"
       mc:Ignorable="d" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="600" d:DesignWidth="800">
-
-    <Grid.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Microsoft.VisualStudio.Shell.12.0;component/ui/styles/startpageresources.xaml" />
-                <ResourceDictionary>
-                    <Style x:Key="StartPage.ProjectCommand.LinkStyle" TargetType="{x:Type vs:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
-                        <Setter Property="Control.Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type vs:ImageButton}">
-                                    <TextBlock Grid.Column="1" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="600" d:DesignWidth="800"
+      VerticalScrollBarVisibility="Auto">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="pack://application:,,,/Microsoft.VisualStudio.Shell.12.0;component/ui/styles/startpageresources.xaml" />
+                    <ResourceDictionary>
+                        <Style x:Key="StartPage.ProjectCommand.LinkStyle" TargetType="{x:Type vs:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type vs:ImageButton}">
+                                        <TextBlock Grid.Column="1" 
                                        x:Name="PART_Text" x:Uid="PART_Text"
                                        Text="{TemplateBinding ContentControl.Content}" 
                                        VerticalAlignment="Center"
                                        Style="{StaticResource StartPage.NormalTextStyle}"
                                        Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
                                        FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}"/>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="UIElement.IsMouseOver" Value="true">
-                                            <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
-                                            <Setter TargetName="PART_Text"
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="UIElement.IsMouseOver" Value="true">
+                                                <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+                                                <Setter TargetName="PART_Text"
                                               Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
                                               Property="TextBlock.Foreground"/>
-                                        </Trigger>
-                                        <Trigger Property="UIElement.IsFocused" Value="true">
-                                            <Setter TargetName="PART_Text"
+                                            </Trigger>
+                                            <Trigger Property="UIElement.IsFocused" Value="true">
+                                                <Setter TargetName="PART_Text"
                                               Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
                                               Property="TextBlock.Foreground"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Grid.Resources>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ResourceDictionary>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
 
-    <Grid Style="{DynamicResource StartPage.OuterGridStyle}" Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}">
+        <Grid Style="{DynamicResource StartPage.OuterGridStyle}" Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}">
             <!--<LinearGradientBrush>
                 <GradientStop Color="{DynamicResource {x:Static vsfx:VsBrushes.StartPageBackgroundGradientBeginKey}}" />
                 <GradientStop Color="{DynamicResource {x:Static vsfx:VsBrushes.StartPageBackgroundGradientEndKey}}" />
             </LinearGradientBrush>-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="270" Width="3*" MaxWidth="330" />
-            <ColumnDefinition Width="7*" MinWidth="0"/>
-        </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="270" Width="3*" MaxWidth="330" />
+                <ColumnDefinition Width="7*" MinWidth="0"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Left Column -->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Header -->
-                <RowDefinition Height="Auto"/>
-                <!-- Start -->
-                <RowDefinition Height="*"/>
-                <!-- Recent -->
-                <RowDefinition Height="Auto" />
-                <!-- Options -->
-            </Grid.RowDefinitions>
-
-            <TextBlock Style="{DynamicResource StartPage.AnnouncementsHeadingTextStyle}" Margin="30">Visual Studio</TextBlock>
-
-            <!-- Start -->
-            <Grid Grid.Row="1" Margin="30,0,30,0">
+            <!-- Left Column -->
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <!-- Header -->
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <!-- Start -->
+                    <RowDefinition Height="*"/>
+                    <!-- Recent -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Options -->
                 </Grid.RowDefinitions>
 
-                <TextBlock 
+                <TextBlock Style="{DynamicResource StartPage.AnnouncementsHeadingTextStyle}" Margin="30">Visual Studio</TextBlock>
+
+                <!-- Start -->
+                <Grid Grid.Row="1" Margin="30,0,30,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock 
                     Grid.Row="0"
                     Margin="0,10"
                     Style="{DynamicResource StartPage.ItemHeadingTextStyle}">
                     Start
-                </TextBlock>
+                    </TextBlock>
 
-                <vs:ImageButton
+                    <vs:ImageButton
                     Grid.Row="1"
                     Margin="0,3"
                     Content="New Project..."
                     Style="{StaticResource StartPage.ProjectCommand.LinkStyle}"
                     Command="{x:Static vsfxim:VSCommands.ExecuteCommand}" CommandParameter="File.NewProject">
-                </vs:ImageButton>
+                    </vs:ImageButton>
 
-                <vs:ImageButton
+                    <vs:ImageButton
                     Grid.Row="2"
                     Margin="0,3"
                     Content="Open Project..."
                     Style="{StaticResource StartPage.ProjectCommand.LinkStyle}"
                     Command="{x:Static vsfxim:VSCommands.ExecuteCommand}" CommandParameter="File.OpenProject">
-                </vs:ImageButton>
+                    </vs:ImageButton>
 
-                <vs:ImageButton
+                    <vs:ImageButton
                     Grid.Row="3"
                     Margin="0,3"
                     Content="Open from Source Control..."
                     Style="{StaticResource StartPage.ProjectCommand.LinkStyle}"
                     Command="{x:Static vsfxim:VSCommands.ExecuteCommand}" CommandParameter="File.OpenfromSourceControl">
-                </vs:ImageButton>
+                    </vs:ImageButton>
 
-            </Grid>
+                </Grid>
 
-            <!-- Recent -->
-            <Grid Grid.Row="2" Margin="30,5,30,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                <!-- Recent -->
+                <Grid Grid.Row="2" Margin="30,5,30,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <TextBlock 
+                    <TextBlock 
                     Grid.Row="0"
                     Margin="0,10"
                     Style="{DynamicResource StartPage.ItemHeadingTextStyle}">
                     Recent
-                </TextBlock>
+                    </TextBlock>
 
-                <vs:MruListBox 
+                    <vs:MruListBox 
                     Grid.Row="1"
                     DataContext="{Binding RecentProjects}" 
                     ItemsSource="{Binding Path=Items}"
@@ -136,24 +137,25 @@
                     BorderThickness="0"
                     Margin="-28,0,0,0"
                     AutomationProperties.AutomationId="MruList"/>
-            </Grid>
+                </Grid>
 
-            <!-- Options -->
-            <StackPanel Margin="30,0,30,30" Grid.Column="0" Grid.Row="3">
-                <CheckBox 
+                <!-- Options -->
+                <StackPanel Margin="30,0,30,30" Grid.Column="0" Grid.Row="3">
+                    <CheckBox 
                     Style="{StaticResource StartPage.CheckBoxStyle}"
                     Content="Close page after project load" 
                     IsChecked="{Binding ClosePageOnOpenProject, Mode=TwoWay}" 
                     Margin="0,5"/>
-                <CheckBox 
+                    <CheckBox 
                     Style="{StaticResource StartPage.CheckBoxStyle}"
                     Content="Show page on startup" 
                     IsChecked="{Binding ShowPageAtStartup, Mode=TwoWay}" 
                     Margin="0,5"/>
-            </StackPanel>
-        </Grid>
+                </StackPanel>
+            </Grid>
 
-        <!-- Right Column -->
-        <control:ProjectGroupsControl Grid.Column="1" DataContext="{Binding}" />
+            <!-- Right Column -->
+            <control:ProjectGroupsControl Grid.Column="1" DataContext="{Binding}" />
+        </Grid>
     </Grid>
-</Grid>
+</ScrollViewer>

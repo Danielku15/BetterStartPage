@@ -1,3 +1,7 @@
+# 1.4
+
+- Improved scrolling behavior of start page
+
 # 1.3
 
 - Support adding and opening HTTP Urls 
