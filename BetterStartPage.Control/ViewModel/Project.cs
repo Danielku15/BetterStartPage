@@ -8,11 +8,16 @@ namespace BetterStartPage.Control.ViewModel
     class Project : ViewModelBase
     {
         private Uri _fileInfo;
+        private string _customName;
 
         public string Name
         {
             get
             {
+                if (!string.IsNullOrWhiteSpace(CustomName))
+                {
+                    return CustomName;
+                }
                 if (_fileInfo.IsFile)
                 {
                     return Path.GetFileName(FullName);
@@ -21,10 +26,29 @@ namespace BetterStartPage.Control.ViewModel
             }
         }
 
+        [DataMember]
+        public string CustomName
+        {
+            get { return _customName; }
+            set
+            {
+                if (value == _customName) return;
+                _customName = value;
+                OnPropertyChanged();
+                OnPropertyChanged("Name");
+                OnPropertyChanged("DirectoryName");
+            }
+        }
+
         public string DirectoryName
         {
             get
             {
+                // show full name if a custom name is set
+                if (!string.IsNullOrWhiteSpace(CustomName))
+                {
+                    return FullName;
+                }
                 if (_fileInfo.IsFile)
                 {
                     return Path.GetDirectoryName(FullName);

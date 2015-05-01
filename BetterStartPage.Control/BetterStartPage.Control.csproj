@@ -83,6 +83,9 @@
     <Compile Include="IIdeAccess.cs" />
     <Compile Include="IntegerValueConverter.cs" />
     <Compile Include="PathToSystemIconConverter.cs" />
+    <Compile Include="ProjectRenameWindow.xaml.cs">
+      <DependentUpon>ProjectRenameWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\ISettingsProvider.cs" />
     <Compile Include="Settings\DummySettingsProvider.cs" />
     <Compile Include="ViewModel\ProjectGroup.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Settings\VsSettingsProvider.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\ProjectRenameViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="VsIdeAccess.cs" />
     <Page Include="ProjectGroupsControl.xaml">
@@ -102,6 +106,10 @@
       <DependentUpon>ProjectGroupsControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ProjectRenameWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -138,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\DeleteHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Rename_6779.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

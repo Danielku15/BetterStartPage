@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using BetterStartPage.Control.ViewModel;
 using EnvDTE;
 using EnvDTE80;
 using Process = System.Diagnostics.Process;
@@ -43,6 +44,19 @@ namespace BetterStartPage.Control
                     _ide.ExecuteCommand("File.OpenFile", String.Format("\"{0}\"", name));
                 }
             }
+        }
+
+        public bool ShowProjectRenameDialog(string name, out string newName)
+        {
+            newName = null;
+            var vm = new ProjectRenameViewModel(name);
+            var wnd = new ProjectRenameWindow {DataContext = vm};
+            if (wnd.ShowDialog().GetValueOrDefault())
+            {
+                newName = vm.ProjectName;
+                return true;
+            }
+            return false;
         }
     }
 }

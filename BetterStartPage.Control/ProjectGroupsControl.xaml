@@ -258,6 +258,13 @@
 
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource boolToVisibilityConverter}}">
                                                 <ui:ImageButton
+                                                ToolTip="Rename"
+                                                Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
+                                                Command="{Binding DataContext.RenameProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                ImageNormal="pack://application:,,,/BetterStartPage.Control;component/Images/Rename_6779.png"
+                                                />
+                                                <ui:ImageButton
                                                 ToolTip="Delete"
                                                 Style="{StaticResource StartPage.ProjectCommand.ActionButtonStyle}"
                                                 Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"

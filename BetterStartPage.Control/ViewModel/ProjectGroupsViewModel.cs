@@ -76,6 +76,7 @@ namespace BetterStartPage.Control.ViewModel
         public ICommand MoveGroupDownCommand { get; private set; }
 
         public ICommand AddProjectsCommand { get; private set; }
+        public ICommand RenameProjectCommand { get; private set; }
         public ICommand DeleteProjectCommand { get; private set; }
         public ICommand MoveProjectUpCommand { get; private set; }
         public ICommand MoveProjectDownCommand { get; private set; }
@@ -94,6 +95,7 @@ namespace BetterStartPage.Control.ViewModel
             MoveGroupDownCommand = new RelayCommand<ProjectGroup>(MoveGroupDown);
 
             AddProjectsCommand = new RelayCommand<FilesDroppedEventArgs>(AddProjects);
+            RenameProjectCommand = new RelayCommand<Project>(RenameProject);
             DeleteProjectCommand = new RelayCommand<Project>(DeleteProject);
             MoveProjectUpCommand = new RelayCommand<Project>(MoveProjectUp);
             MoveProjectDownCommand = new RelayCommand<Project>(MoveProjectDown);
@@ -185,6 +187,18 @@ namespace BetterStartPage.Control.ViewModel
             if (index == -1) return;
 
             MoveGroup((IList<Project>)group.Projects, index, up);
+        }
+
+        private void RenameProject(Project project)
+        {
+            ProjectGroup group = GetGroupOfProject(project);
+            if (group == null) return;
+
+            string newName;
+            if (_ideAccess.ShowProjectRenameDialog(project.Name, out newName))
+            {
+                project.CustomName = newName;
+            }
         }
 
         private void DeleteProject(Project project)

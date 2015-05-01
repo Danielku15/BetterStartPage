@@ -1,3 +1,7 @@
+# 1.5
+
+- Added possibility to set custom project titles instead of the file name. 
+
 # 1.4
 
 - Improved scrolling behavior of start page
