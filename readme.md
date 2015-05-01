@@ -19,6 +19,12 @@ You can reorder or delete groups and projects by using the action buttons beside
 
 ## Basic Usage
 
+**Due to some restrictions within Windows, it's not possible to drag&drop items from 
+  a non elevated application (like the normal Windows Explorer) into an elevated one. 
+  Please ensure you start Visual Studio with normal user credentials and not using 
+  'Run as Administrator', otherwise the dragging projects and solutions into 
+  BetterStartPage will not work**
+
 - right click on the empty area and enable the edit mode 
 - add new groups using the "Add Group" link on the bottom
 - edit the group titles using the inline textbox
