@@ -1,6 +1,7 @@
 # 1.5
 
 - Added possibility to set custom project titles instead of the file name. 
+- VS2015 Support
 
 # 1.4
 

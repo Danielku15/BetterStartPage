@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
@@ -27,6 +28,12 @@ namespace BetterStartPage.Control
             if (dataSource != null)
             {
                 return dataSource.GetValue("DTE") as DTE2;
+            }
+
+            var dte = Package.GetGlobalService(typeof (DTE)) as DTE2;
+            if (dte != null)
+            {
+                return dte;
             }
 
             Debug.Assert(false, "Could not get DTE instance, was " + (dataContext == null ? "null" : dataContext.GetType().ToString()));
