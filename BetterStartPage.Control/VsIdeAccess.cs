@@ -50,13 +50,22 @@ namespace BetterStartPage.Control
         {
             newName = null;
             var vm = new ProjectRenameViewModel(name);
-            var wnd = new ProjectRenameWindow {DataContext = vm};
+            var wnd = new ProjectRenameWindow { DataContext = vm };
             if (wnd.ShowDialog().GetValueOrDefault())
             {
                 newName = vm.ProjectName;
                 return true;
             }
             return false;
+        }
+
+        public bool ShowMissingFileDialog(string fullName)
+        {
+            return MessageBox.Show(
+                string.Format("The File '{0}' could not be found on the disk, do you want to remove it from the StartPage?", fullName),
+                "File not found",
+                MessageBoxButton.YesNo, MessageBoxImage.Error
+            ) == MessageBoxResult.Yes;
         }
     }
 }

@@ -1,3 +1,7 @@
+# 1.6
+
+- Check for existing files before opening (bug #13) 
+
 # 1.5
 
 - Added possibility to set custom project titles instead of the file name. 

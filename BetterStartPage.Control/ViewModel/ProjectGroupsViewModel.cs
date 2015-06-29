@@ -124,7 +124,15 @@ namespace BetterStartPage.Control.ViewModel
 
         private void OpenProject(Project project)
         {
-            if (project.IsNormalFile)
+            if (!File.Exists(project.FullName) && !Directory.Exists(project.FullName))
+            {
+                var shouldRemove = _ideAccess.ShowMissingFileDialog(project.FullName);
+                if (shouldRemove)
+                {
+                    InternalDeleteProject(project);
+                }
+            }
+            else if (project.IsNormalFile)
             {
                 _ideAccess.OpenFile(project.FullName);
             }
@@ -203,13 +211,21 @@ namespace BetterStartPage.Control.ViewModel
 
         private void DeleteProject(Project project)
         {
-            ProjectGroup group = GetGroupOfProject(project);
-            if (group == null) return;
-
             if (_ideAccess.ShowDeleteConfirmation(
                 string.Format("Are you sure you want to delete '{0}'?", project.FullName)))
             {
-                ((IList<Project>)group.Projects).Remove(project);
+                InternalDeleteProject(project);
+            }
+        }
+
+        private void InternalDeleteProject(Project project)
+        {
+            ProjectGroup group = GetGroupOfProject(project);
+            if (group == null) return;
+            ((IList<Project>)group.Projects).Remove(project);
+            if (!IsEditMode)
+            {
+                PersistSettings();
             }
         }
 
