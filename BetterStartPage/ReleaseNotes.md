@@ -1,6 +1,7 @@
 # 1.6
 
 - Check for existing files before opening (bug #13) 
+- Fixed .net Version requirement in manifest (bug #14)
 
 # 1.5
 

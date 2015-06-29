@@ -35,7 +35,7 @@ You can reorder or delete groups and projects by using the action buttons beside
         <Edition>Enterprise</Edition>
       </VisualStudio>
     </SupportedProducts>
-    <SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="4.5" />
+    <SupportedFrameworkRuntimeEdition MinVersion="4.5" />
   </Identifier>
   <References />
   <Content>
