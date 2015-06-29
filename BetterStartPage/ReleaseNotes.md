@@ -1,5 +1,6 @@
 # 1.6
 
+- Different solution opening mechanism to ensure MRU is updated (bug #12)
 - Check for existing files before opening (bug #13) 
 - Fixed .net Version requirement in manifest (bug #14)
 
