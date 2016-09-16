@@ -1,3 +1,7 @@
+# 1.7
+- Dropped support for older Visual Studios
+- Replaced custom start page with loading original start page and change right panel. (bug #16)
+
 # 1.6
 
 - Different solution opening mechanism to ensure MRU is updated (bug #12)

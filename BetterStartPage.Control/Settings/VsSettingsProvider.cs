@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Threading;
+using System.Windows;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 

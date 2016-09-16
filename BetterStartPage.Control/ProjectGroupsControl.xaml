@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.12.0"
              xmlns:viewModel="clr-namespace:BetterStartPage.Control.ViewModel"
-             xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              xmlns:control="clr-namespace:BetterStartPage.Control"
-             Loaded="OnLoaded"    
+             xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+             Loaded="OnLoaded"     
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400">
+             d:DataContext="{d:DesignInstance viewModel:ProjectGroupsViewModel}"
+             d:DesignHeight="400" d:DesignWidth="400"
+             Margin="24,0,24,0">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Microsoft.VisualStudio.Shell.12.0;component/ui/styles/startpageresources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Microsoft.VisualStudio.Shell.14.0;component/ui/styles/startpageresources.xaml" />
                 <ResourceDictionary>
                     <Style x:Key="StartPage.LinkButtonStyle" TargetType="{x:Type ui:ImageButton}" BasedOn="{StaticResource StartPage.ProjectCommand.ButtonStyle}">
                         <Setter Property="Template">
@@ -22,19 +23,19 @@
                                     <TextBlock x:Name="PART_Text" 
                                                 Text="{TemplateBinding Content}"
                                                 VerticalAlignment="Center" Style="{StaticResource StartPage.NormalTextStyle}"
-                                                Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
+                                                Foreground="{DynamicResource VsBrush.StartPageTextControlLinkSelected}"
                                                 FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}">
                                     </TextBlock>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="UIElement.IsMouseOver" Value="true">
                                             <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
                                             <Setter TargetName="PART_Text"
-                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Value="{DynamicResource VsBrush.StartPageTextControlLinkSelectedHover}"
                                                     Property="TextBlock.Foreground"/>
                                         </Trigger>
                                         <Trigger Property="UIElement.IsFocused" Value="true">
                                             <Setter TargetName="PART_Text"
-                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Value="{DynamicResource VsBrush.StartPageTextControlLinkSelectedHover}"
                                                     Property="TextBlock.Foreground"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
@@ -92,7 +93,7 @@
                                                    Margin="8,0,0,0" 
                                                    ToolTip="{Binding FullName}"
                                                    VerticalAlignment="Center" Style="{StaticResource StartPage.NormalTextStyle}"
-                                                   Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedKey}}"
+                                                   Foreground="{DynamicResource VsBrush.StartPageTextControlLinkSelected}"
                                                    FocusVisualStyle="{DynamicResource StartPage.CommandButtonFocusVisual}">
                                             <TextBlock x:Name="PART_Name" 
                                                        Text="{Binding Name}" 
@@ -107,12 +108,12 @@
                                         <Trigger Property="UIElement.IsMouseOver" Value="true">
                                             <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
                                             <Setter TargetName="PART_Text"
-                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Value="{DynamicResource VsBrush.StartPageTextControlLinkSelectedHover}"
                                                     Property="TextBlock.Foreground"/>
                                         </Trigger>
                                         <Trigger Property="UIElement.IsFocused" Value="true">
                                             <Setter TargetName="PART_Text"
-                                                    Value="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextControlLinkSelectedHoverKey}}"
+                                                    Value="{DynamicResource VsBrush.StartPageTextControlLinkSelectedHover}"
                                                     Property="TextBlock.Foreground"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
@@ -164,7 +165,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ItemsControl ItemsSource="{Binding Groups}" Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}">
+        <ItemsControl ItemsSource="{Binding Groups}" Background="{DynamicResource VsBrush.StartPageTabBackground}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <control:AdvancedGrid
@@ -192,7 +193,7 @@
 
                             <Grid Margin="0,30,0,5">
                                 <StackPanel Orientation="Horizontal" AllowDrop="True">
-                                    <TextBlock Style="{DynamicResource StartPage.DiscoverTitleTextStyle}" Text="{Binding Title}"  />
+                                    <TextBlock Style="{DynamicResource TextBlockEnvironment200PercentFontSizeStyleKey}" Text="{Binding Title}"  />
                                     <ui:ImageButton 
                                         Margin="5"
                                         VerticalAlignment="Center"
@@ -335,15 +336,4 @@
         </StackPanel>
 
     </Grid>
-
-    <!--<Border Margin="20" CornerRadius="10" BorderThickness="3" BorderBrush="{DynamicResource {x:Static vsfx:VsBrushes.StartPageSeparatorKey}}">-->
-    <!--<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource {x:Static vsfx:VsBrushes.StartPageTextBodyKey}}">
-                <TextBlock Text="My Start Page Control" FontSize="18" HorizontalAlignment="Center"/>
-                -->
-    <!-- Start Page tool window DataContext includes Visual Studio DTE for accessing Visual Studio properties and services. -->
-    <!--
-                <TextBlock Text="{Binding Path=DTE.Name}" FontSize="12" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </Border>
-        </Grid>-->
 </UserControl>

@@ -53,5 +53,10 @@ namespace BetterStartPage.Control.ViewModel
         }
 
         public event EventHandler CanExecuteChanged;
+
+        public virtual void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }
