@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace BetterStartPage.Control.ViewModel
 {
-    class RelayCommand : ICommand
+    internal class RelayCommand : ICommand
     {
         private readonly Action _action;
         private readonly Func<bool> _canExecute;
@@ -28,12 +28,11 @@ namespace BetterStartPage.Control.ViewModel
 
         public void RaiseCanExecuteChanged()
         {
-            EventHandler handler = CanExecuteChanged;
-            if (handler != null) handler(this, EventArgs.Empty);
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    class RelayCommand<T> : ICommand
+    internal class RelayCommand<T> : ICommand
     {
         private readonly Action<T> _action;
 

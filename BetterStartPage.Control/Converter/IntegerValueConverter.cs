@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.Converter
 {
-    class IntegerValueConverter : IValueConverter
+    internal class IntegerValueConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

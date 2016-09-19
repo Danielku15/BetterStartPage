@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.View
 {
-    class AutoGridHelper
+    internal class AdvancedGrid : Grid
     {
-        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
-            "Columns", typeof(int), typeof(AutoGridHelper), new PropertyMetadata(default(int), OnColumnsChanged));
+        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
+            "Columns", typeof(int), typeof(AdvancedGrid), new PropertyMetadata(default(int), OnColumnsChanged));
 
         private static void OnColumnsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var grid = (Grid)d;
+            var grid = (AdvancedGrid)d;
             var newValue = Math.Max(1, (int)e.NewValue);
 
             if (grid.ColumnDefinitions.Count > newValue)
@@ -36,22 +34,18 @@ namespace BetterStartPage.Control
             RebuildGridChildren(grid);
         }
 
-        public static void SetColumns(DependencyObject element, int value)
+        public int Columns
         {
-            element.SetValue(ColumnsProperty, value);
+            get { return (int) GetValue(ColumnsProperty); }
+            set { SetValue(ColumnsProperty, value); }
         }
 
-        public static int GetColumns(DependencyObject element)
-        {
-            return (int)element.GetValue(ColumnsProperty);
-        }
-
-        public static readonly DependencyProperty RowsProperty = DependencyProperty.RegisterAttached(
-            "Rows", typeof(int), typeof(AutoGridHelper), new PropertyMetadata(default(int), OnRowsChanged));
+        public static readonly DependencyProperty RowsProperty = DependencyProperty.Register(
+            "Rows", typeof(int), typeof(AdvancedGrid), new PropertyMetadata(default(int), OnRowsChanged));
 
         private static void OnRowsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var grid = (Grid)d;
+            var grid = (AdvancedGrid)d;
             var newValue = Math.Max(1, (int)e.NewValue);
 
             if (grid.RowDefinitions.Count > newValue)
@@ -74,47 +68,30 @@ namespace BetterStartPage.Control
             RebuildGridChildren(grid);
         }
 
-        public static void SetRows(DependencyObject element, int value)
+        public int Rows
         {
-            element.SetValue(RowsProperty, value);
+            get { return (int) GetValue(RowsProperty); }
+            set { SetValue(RowsProperty, value); }
         }
 
-        public static int GetRows(DependencyObject element)
+        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
-            return (int)element.GetValue(RowsProperty);
+            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            RebuildGridChildren(this);
         }
 
-        public static readonly DependencyProperty AttachProperty = DependencyProperty.RegisterAttached(
-            "Attach", typeof (bool), typeof (AutoGridHelper), new PropertyMetadata(default(bool), OnAttach));
-
-        private static void OnAttach(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var grid = (AdvancedGrid) d;
-            grid.VisualChildrenChanged += (sender, args) => RebuildGridChildren(grid);
-        }
-
-        public static void SetAttach(DependencyObject element, bool value)
-        {
-            element.SetValue(AttachProperty, value);
-        }
-
-        public static bool GetAttach(DependencyObject element)
-        {
-            return (bool) element.GetValue(AttachProperty);
-        }
-
-        private static void RebuildGridChildren(Grid grid)
+        private static void RebuildGridChildren(AdvancedGrid grid)
         {
             int column = 0;
             int row = 0;
-            var columnCount = GetColumns(grid);
+            var columnCount = grid.Columns;
             for (int i = 0; i < grid.Children.Count; i++)
             {
                 var child = grid.Children[i];
                 if (child == null) continue;
 
-                Grid.SetColumn(child, column);
-                Grid.SetRow(child, row);
+                SetColumn(child, column);
+                SetRow(child, row);
 
                 column++;
                 if (column >= columnCount)

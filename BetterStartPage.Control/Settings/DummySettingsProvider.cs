@@ -3,7 +3,7 @@ using BetterStartPage.Control.ViewModel;
 
 namespace BetterStartPage.Control.Settings
 {
-    class DummySettingsProvider : ISettingsProvider
+    internal class DummySettingsProvider : ISettingsProvider
     {
         private readonly Dictionary<string, object> _settings = new Dictionary<string, object>();
 

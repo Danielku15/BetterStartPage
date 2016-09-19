@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace BetterStartPage.Control.ViewModel
 {
     [DataContract]
-    class Project : ViewModelBase
+    internal class Project : ViewModelBase
     {
         private Uri _fileInfo;
         private string _customName;
@@ -35,8 +35,8 @@ namespace BetterStartPage.Control.ViewModel
                 if (value == _customName) return;
                 _customName = value;
                 OnPropertyChanged();
-                OnPropertyChanged("Name");
-                OnPropertyChanged("DirectoryName");
+                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(DirectoryName));
             }
         }
 
@@ -72,8 +72,8 @@ namespace BetterStartPage.Control.ViewModel
             {
                 _fileInfo = new Uri(value);
                 OnPropertyChanged();
-                OnPropertyChanged("Name");
-                OnPropertyChanged("DirectoryName");
+                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(DirectoryName));
             }
         }
 

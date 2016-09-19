@@ -5,9 +5,9 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.View
 {
-    class GridFileDragAndDropDecorator : BaseDecorator
+    internal class GridFileDragAndDropDecorator : Decorator
     {
         private DragAdorner _itemAdorner;
 
@@ -50,6 +50,15 @@ namespace BetterStartPage.Control
         public GridFileDragAndDropDecorator()
         {
             Loaded += OnLoaded;
+        }
+
+        protected UIElement DecoratedUIElement
+        {
+            get
+            {
+                var decorator = Child as GridFileDragAndDropDecorator;
+                return decorator != null ? decorator.DecoratedUIElement : Child;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -154,12 +163,8 @@ namespace BetterStartPage.Control
                 if (_itemAdorner == null)
                 {
                     var adornerLayer = AdornerLayer.GetAdornerLayer(grid);
-                    if (grid != null)
-                    {
-                        _itemAdorner = new DragAdorner(dragData, DataTemplate,
-                                grid, adornerLayer);
-
-                    }
+                    _itemAdorner = new DragAdorner(dragData, DataTemplate,
+                        grid, adornerLayer);
                 }
             }
         }

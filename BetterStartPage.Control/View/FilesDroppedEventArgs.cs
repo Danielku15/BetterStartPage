@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.View
 {
     class FilesDroppedEventArgs : EventArgs
     {
-        public object DropTarget { get; private set; }
-        public object DropData { get; private set; }
+        public object DropTarget { get; }
+        public object DropData { get; }
 
         public FilesDroppedEventArgs(object dropTarget, object dropData)
         {

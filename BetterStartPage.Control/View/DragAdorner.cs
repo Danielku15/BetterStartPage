@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.View
 {
-    public class DragAdorner : Adorner
+    internal class DragAdorner : Adorner
     {
         private readonly ContentPresenter _contentPresenter;
         private readonly AdornerLayer _adornerLayer;
@@ -38,10 +38,7 @@ namespace BetterStartPage.Control
             return _contentPresenter;
         }
 
-        protected override int VisualChildrenCount
-        {
-            get { return 1; }
-        }
+        protected override int VisualChildrenCount => 1;
 
         public void Destroy()
         {

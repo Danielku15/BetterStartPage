@@ -5,14 +5,13 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using BetterStartPage.Control.ViewModel;
 using EnvDTE80;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace BetterStartPage.Control
 {
-    class VsIdeAccess : IIdeAccess
+    internal class VsIdeAccess : IIdeAccess
     {
         private readonly DTE2 _ide;
 
@@ -32,9 +31,9 @@ namespace BetterStartPage.Control
                 }
                 else
                 {
-                    IntPtr ppProject = IntPtr.Zero;
-                    Guid iidProject = VSConstants.IID_IUnknown;
-                    Guid rguidProjectType = Guid.Empty;
+                    var ppProject = IntPtr.Zero;
+                    var iidProject = Guid.Empty;
+                    var rguidProjectType = Guid.Empty;
                     solution.CreateProject(ref rguidProjectType, name, string.Empty, string.Empty, 2U,
                         ref iidProject, out ppProject);
                     if (ppProject != IntPtr.Zero)
@@ -90,7 +89,7 @@ namespace BetterStartPage.Control
                 }
                 else
                 {
-                    _ide.ExecuteCommand("File.OpenFile", String.Format("\"{0}\"", name));
+                    _ide.ExecuteCommand("File.OpenFile", $"\"{name}\"");
                 }
             }
         }
@@ -111,7 +110,7 @@ namespace BetterStartPage.Control
         public bool ShowMissingFileDialog(string fullName)
         {
             return MessageBox.Show(
-                string.Format("The File '{0}' could not be found on the disk, do you want to remove it from the StartPage?", fullName),
+                $"The File '{fullName}' could not be found on the disk, do you want to remove it from the StartPage?",
                 "File not found",
                 MessageBoxButton.YesNo, MessageBoxImage.Error
             ) == MessageBoxResult.Yes;

@@ -27,6 +27,7 @@
 *.psess
 *.etl
 *.vspx
+.vs/
 ipch/
 obj/
 [Dd]ebug*/

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -11,9 +10,9 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace BetterStartPage.Control
+namespace BetterStartPage.Control.Converter
 {
-    public class PathToSystemIconConverter : IValueConverter
+    internal class PathToSystemIconConverter : IValueConverter
     {
         private readonly Dictionary<string, ImageSource> _imageCache;
 

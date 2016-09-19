@@ -1,6 +1,6 @@
 ﻿namespace BetterStartPage.Control.ViewModel
 {
-    class ProjectRenameViewModel : ViewModelBase
+    internal class ProjectRenameViewModel : ViewModelBase
     {
         private string _projectName;
 

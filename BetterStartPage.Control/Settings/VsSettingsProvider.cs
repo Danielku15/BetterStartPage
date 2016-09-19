@@ -1,16 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using Microsoft.VisualStudio.PlatformUI;
+﻿using System.Text;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace BetterStartPage.Control.Settings
 {
-    class VsSettingsProvider : ISettingsProvider
+    internal class VsSettingsProvider : ISettingsProvider
     {
         private const string SettingsRootPrefix = @"StartPage\Settings\";
 

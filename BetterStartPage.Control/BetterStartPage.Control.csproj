@@ -47,18 +47,18 @@
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\EnvDTE80.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.VisualStudio.Shell.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 14.0\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Shell.14.0.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -69,16 +69,17 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvancedGrid.cs" />
-    <Compile Include="AutoGridHelper.cs" />
-    <Compile Include="BaseDecorator.cs" />
+    <Compile Include="View\AdvancedGrid.cs" />
+    <Compile Include="View\ImageButton.cs" />
+    <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
+    <Compile Include="View\RelativeFontSizeHelper.cs" />
     <Compile Include="StartPageBootstrapBehavior.cs" />
-    <Compile Include="DragAdorner.cs" />
-    <Compile Include="FilesDroppedEventArgs.cs" />
-    <Compile Include="GridFileDragAndDropDecorator.cs" />
+    <Compile Include="View\DragAdorner.cs" />
+    <Compile Include="View\FilesDroppedEventArgs.cs" />
+    <Compile Include="View\GridFileDragAndDropDecorator.cs" />
     <Compile Include="IIdeAccess.cs" />
-    <Compile Include="IntegerValueConverter.cs" />
-    <Compile Include="PathToSystemIconConverter.cs" />
+    <Compile Include="Converter\IntegerValueConverter.cs" />
+    <Compile Include="Converter\PathToSystemIconConverter.cs" />
     <Compile Include="ProjectRenameWindow.xaml.cs">
       <DependentUpon>ProjectRenameWindow.xaml</DependentUpon>
     </Compile>
@@ -94,6 +95,7 @@
     <Compile Include="ViewModel\ProjectRenameViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="VsIdeAccess.cs" />
+    <Compile Include="VsResources.cs" />
     <Page Include="ProjectGroupsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,6 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Rename_6779.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AddAgent_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

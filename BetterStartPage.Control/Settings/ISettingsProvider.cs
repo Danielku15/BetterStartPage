@@ -1,6 +1,6 @@
 ﻿namespace BetterStartPage.Control.Settings
 {
-    interface ISettingsProvider
+    internal interface ISettingsProvider
     {
         void WriteInt32(string name, int value);
         int ReadInt32(string name, int defaultValue = 0);

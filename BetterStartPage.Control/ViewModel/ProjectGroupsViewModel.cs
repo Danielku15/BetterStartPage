@@ -4,19 +4,22 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using BetterStartPage.Control.Settings;
+using BetterStartPage.Control.View;
+using Microsoft.Win32;
 
 namespace BetterStartPage.Control.ViewModel
 {
-    class ProjectGroupsViewModel : ViewModelBase
+    internal class ProjectGroupsViewModel : ViewModelBase
     {
         private readonly IIdeAccess _ideAccess;
         private int _groupColumns;
         private ObservableCollection<ProjectGroup> _groups;
         private int _groupRows;
         private bool _isEditMode;
-        private ISettingsProvider _settingsProvider;
+        private readonly ISettingsProvider _settingsProvider;
 
         public int GroupColumns
         {
@@ -67,32 +70,38 @@ namespace BetterStartPage.Control.ViewModel
             }
         }
 
-        public ICommand OpenProjectCommand { get; private set; }
-        public ICommand OpenAllFilesCommand { get; private set; }
+        public ICommand OpenProjectCommand { get; }
+        public ICommand OpenDirectoryCommand { get; }
+        public ICommand OpenAllFilesCommand { get; }
 
-        public ICommand AddGroupCommand { get; private set; }
-        public ICommand DeleteGroupCommand { get; private set; }
-        public ICommand MoveGroupUpCommand { get; private set; }
-        public ICommand MoveGroupDownCommand { get; private set; }
+        public ICommand AddGroupCommand { get; }
+        public ICommand DeleteGroupCommand { get; }
+        public ICommand MoveGroupUpCommand { get; }
+        public ICommand MoveGroupDownCommand { get; }
+        public ICommand AddProjectsToGroupCommand { get; }
 
-        public ICommand AddProjectsCommand { get; private set; }
-        public ICommand RenameProjectCommand { get; private set; }
-        public ICommand DeleteProjectCommand { get; private set; }
-        public ICommand MoveProjectUpCommand { get; private set; }
-        public ICommand MoveProjectDownCommand { get; private set; }
+        public ICommand AddProjectsCommand { get; }
+        public ICommand RenameProjectCommand { get; }
+        public ICommand DeleteProjectCommand { get; }
+        public ICommand MoveProjectUpCommand { get; }
+        public ICommand MoveProjectDownCommand { get; }
 
-        public ICommand IncreaseGroupColumnsCommand { get; private set; }
-        public ICommand DecreaseGroupColumnsCommand { get; private set; }
+        public ICommand IncreaseGroupColumnsCommand { get; }
+        public ICommand DecreaseGroupColumnsCommand { get; }
 
-        public ProjectGroupsViewModel(IIdeAccess ideAccess)
+        public ProjectGroupsViewModel(IIdeAccess ideAccess, ISettingsProvider settingsProvider)
         {
             _ideAccess = ideAccess;
+            _settingsProvider = settingsProvider;
+
             OpenProjectCommand = new RelayCommand<Project>(OpenProject);
+            OpenDirectoryCommand = new RelayCommand<Project>(OpenDirectory);
             OpenAllFilesCommand = new RelayCommand<ProjectGroup>(OpenAllFiles);
             AddGroupCommand = new RelayCommand(NewGroup);
             DeleteGroupCommand = new RelayCommand<ProjectGroup>(DeleteGroup);
             MoveGroupUpCommand = new RelayCommand<ProjectGroup>(MoveGroupUp);
             MoveGroupDownCommand = new RelayCommand<ProjectGroup>(MoveGroupDown);
+            AddProjectsToGroupCommand = new RelayCommand<ProjectGroup>(AddProjectsToGroup);
 
             AddProjectsCommand = new RelayCommand<FilesDroppedEventArgs>(AddProjects);
             RenameProjectCommand = new RelayCommand<Project>(RenameProject);
@@ -102,6 +111,8 @@ namespace BetterStartPage.Control.ViewModel
 
             IncreaseGroupColumnsCommand = new RelayCommand(IncreaseGroupColumns);
             DecreaseGroupColumnsCommand = new RelayCommand(DecreaseGroupColumns, () => GroupColumns > 1);
+
+            Setup();
         }
 
         private void DecreaseGroupColumns()
@@ -142,6 +153,11 @@ namespace BetterStartPage.Control.ViewModel
             }
         }
 
+        private void OpenDirectory(Project project)
+        {
+            _ideAccess.OpenFile(project.DirectoryName);
+        }
+
         private void UpdateGroupRows()
         {
             GroupRows = (int)Math.Ceiling(Groups.Count / (double)GroupColumns);
@@ -154,6 +170,11 @@ namespace BetterStartPage.Control.ViewModel
             var group = (ProjectGroup)args.DropTarget;
             var files = (string[])args.DropData;
 
+            AddProjects(group, files);
+        }
+
+        private void AddProjects(ProjectGroup group, string[] files)
+        {
             var existingProjects = new HashSet<string>(group.Projects.Select(p => p.FullName), StringComparer.InvariantCultureIgnoreCase);
 
             var projects = files
@@ -212,7 +233,7 @@ namespace BetterStartPage.Control.ViewModel
         private void DeleteProject(Project project)
         {
             if (_ideAccess.ShowDeleteConfirmation(
-                string.Format("Are you sure you want to delete '{0}'?", project.FullName)))
+                $"Are you sure you want to delete '{project.FullName}'?"))
             {
                 InternalDeleteProject(project);
             }
@@ -243,6 +264,17 @@ namespace BetterStartPage.Control.ViewModel
             UpdateGroupRows();
         }
 
+        private void AddProjectsToGroup(ProjectGroup group)
+        {
+            var dlg = new OpenFileDialog();
+            dlg.Filter = "All Project and Solution Files (*.sln, *.csproj, *.vcxproj, *.vbproj)|*.sln;*.csproj;*.vcxproj;*.vbproj|All Files (*.*)|*.*";
+            dlg.Multiselect = true;
+            if (dlg.ShowDialog(Application.Current.MainWindow).GetValueOrDefault())
+            {
+                AddProjects(group, dlg.FileNames);
+            }
+        }
+
         private void MoveGroupDown(ProjectGroup group)
         {
             int index = _groups.IndexOf(group);
@@ -265,7 +297,7 @@ namespace BetterStartPage.Control.ViewModel
         private void DeleteGroup(ProjectGroup group)
         {
             if (_ideAccess.ShowDeleteConfirmation(
-                string.Format("Are you sure you want to delete '{0}'?", group.Title)))
+                $"Are you sure you want to delete '{group.Title}'?"))
             {
                 _groups.Remove(group);
             }
@@ -275,6 +307,8 @@ namespace BetterStartPage.Control.ViewModel
 
         private void MoveGroup<T>(IList<T> list, int indexToMove, bool up)
         {
+            if (list.Count == 1) return;
+
             if (up)
             {
                 if (indexToMove == 0) return;
@@ -297,11 +331,9 @@ namespace BetterStartPage.Control.ViewModel
 
         #region Loading / Saving
 
-        public bool Setup(ISettingsProvider settingsProvider)
+        private void Setup()
         {
-            _settingsProvider = settingsProvider;
-            var successful = true;
-            var storedGroups = settingsProvider.ReadBytes("StoredGroups");
+            var storedGroups = _settingsProvider.ReadBytes("StoredGroups");
             ProjectGroup[] groups = null;
             if (storedGroups != null && storedGroups.Length > 0)
             {
@@ -318,15 +350,13 @@ namespace BetterStartPage.Control.ViewModel
                 }
                 catch (Exception e)
                 {
-                    successful = false;
                     Debug.WriteLine("Loading Start Page settings failed {0}", e);
+                    throw;
                 }
             }
 
             Groups = new ObservableCollection<ProjectGroup>(groups ?? new ProjectGroup[0]);
-            GroupColumns = settingsProvider.ReadInt32("GroupColumns", 1);
-
-            return successful;
+            GroupColumns = _settingsProvider.ReadInt32("GroupColumns", 1);
         }
 
         private void PersistSettings()

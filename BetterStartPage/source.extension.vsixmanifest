@@ -16,8 +16,7 @@ You can reorder or delete groups and projects by using the action buttons beside
     <Icon>StartPage.png</Icon>
     <PreviewImage>StartPagePreview.png</PreviewImage>
     <License>License.txt</License>
-    <GettingStartedGuide>GettingStarted.md</GettingStartedGuide>
-    <ReleaseNotes>ReleaseNotes.md</ReleaseNotes>
+    <GettingStartedGuide>https://github.com/Danielku15/BetterStartPage/blob/master/BetterStartPage/GettingStarted.md</GettingStartedGuide>
     <MoreInfoUrl>https://github.com/Danielku15/BetterStartPage</MoreInfoUrl>
     <SupportedProducts>
       <VisualStudio Version="14.0">
@@ -25,6 +24,26 @@ You can reorder or delete groups and projects by using the action buttons beside
         <Edition>Premium</Edition>
         <Edition>Ultimate</Edition>
         <Edition>Community</Edition>
+        <Edition>Enterprise</Edition>
+      </VisualStudio>
+      <VisualStudio Version="12.0">
+        <Edition>Pro</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Ultimate</Edition>
+        <Edition>Community</Edition>
+        <Edition>Enterprise</Edition>
+      </VisualStudio>
+      <VisualStudio Version="11.0">
+        <Edition>Pro</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Ultimate</Edition>
+        <Edition>Community</Edition>
+        <Edition>Enterprise</Edition>
+      </VisualStudio>
+      <VisualStudio Version="10.0">
+        <Edition>Pro</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Ultimate</Edition>
         <Edition>Enterprise</Edition>
       </VisualStudio>
     </SupportedProducts>
