@@ -1,5 +1,5 @@
 # 1.7
-- Dropped support for older Visual Studios
+- Added support for VS2010 and VS2012 (bug #1)
 - Replaced custom start page with loading original start page and change right panel. (bug #16)
 - Added button for adding solutions using file selector
 - Open solution folder by clicking on the folder label. 
