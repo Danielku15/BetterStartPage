@@ -81,7 +81,7 @@ namespace BetterStartPage.Control.ViewModel
         {
             get
             {
-                var extension = Path.GetExtension(Name);
+                var extension = Path.GetExtension(FullName);
                 if (extension == null) return true;
                 if (extension.EndsWith(".sln", StringComparison.InvariantCultureIgnoreCase)) return false;
                 if (extension.EndsWith("proj", StringComparison.InvariantCultureIgnoreCase)) return false;

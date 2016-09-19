@@ -20,6 +20,7 @@ namespace BetterStartPage.Control.ViewModel
         private int _groupRows;
         private bool _isEditMode;
         private readonly ISettingsProvider _settingsProvider;
+        private int _projectColumns;
 
         public int GroupColumns
         {
@@ -29,17 +30,18 @@ namespace BetterStartPage.Control.ViewModel
                 if (value == _groupColumns) return;
                 _groupColumns = Math.Max(1, value);
                 ((RelayCommand)DecreaseGroupColumnsCommand).RaiseCanExecuteChanged();
-                UpdateGroupRows();
                 OnPropertyChanged();
             }
         }
 
-        public int GroupRows
+        public int ProjectColumns
         {
-            get { return _groupRows; }
+            get { return _projectColumns; }
             set
             {
-                _groupRows = value;
+                if (value == _projectColumns) return;
+                _projectColumns = Math.Max(0, value);
+                ((RelayCommand)DecreaseProjectColumnsCommand).RaiseCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -88,6 +90,8 @@ namespace BetterStartPage.Control.ViewModel
 
         public ICommand IncreaseGroupColumnsCommand { get; }
         public ICommand DecreaseGroupColumnsCommand { get; }
+        public ICommand IncreaseProjectColumnsCommand { get; }
+        public ICommand DecreaseProjectColumnsCommand { get; }
 
         public ProjectGroupsViewModel(IIdeAccess ideAccess, ISettingsProvider settingsProvider)
         {
@@ -112,6 +116,9 @@ namespace BetterStartPage.Control.ViewModel
             IncreaseGroupColumnsCommand = new RelayCommand(IncreaseGroupColumns);
             DecreaseGroupColumnsCommand = new RelayCommand(DecreaseGroupColumns, () => GroupColumns > 1);
 
+            IncreaseProjectColumnsCommand = new RelayCommand(IncreaseProjectColumns);
+            DecreaseProjectColumnsCommand = new RelayCommand(DecreaseProjectColumns, () => ProjectColumns > 0);
+
             Setup();
         }
 
@@ -123,6 +130,16 @@ namespace BetterStartPage.Control.ViewModel
         private void IncreaseGroupColumns()
         {
             GroupColumns++;
+        }
+
+        private void DecreaseProjectColumns()
+        {
+            ProjectColumns--;
+        }
+
+        private void IncreaseProjectColumns()
+        {
+            ProjectColumns++;
         }
 
         private void OpenAllFiles(ProjectGroup group)
@@ -156,11 +173,6 @@ namespace BetterStartPage.Control.ViewModel
         private void OpenDirectory(Project project)
         {
             _ideAccess.OpenFile(project.DirectoryName);
-        }
-
-        private void UpdateGroupRows()
-        {
-            GroupRows = (int)Math.Ceiling(Groups.Count / (double)GroupColumns);
         }
 
         #region Projects
@@ -261,7 +273,6 @@ namespace BetterStartPage.Control.ViewModel
                 Title = "New Group",
                 Projects = new ObservableCollection<Project>()
             });
-            UpdateGroupRows();
         }
 
         private void AddProjectsToGroup(ProjectGroup group)

@@ -1,3 +1,7 @@
+# 1.9
+- Specify the number of columns for projects within group. 
+- Fixed problem where renaming projects causes solutions to be opened as files. 
+
 # 1.8
 - Also added file menu entry to open items from there.
 
