@@ -5,7 +5,7 @@ namespace BetterStartPage.Control
     /// <summary>
     /// Interaction logic for ProjectRenameWindow.xaml
     /// </summary>
-    public partial class ProjectRenameWindow : Window
+    public partial class ProjectRenameWindow
     {
         public ProjectRenameWindow()
         {

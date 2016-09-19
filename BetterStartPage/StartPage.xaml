@@ -7,6 +7,6 @@
     d:DesignHeight="600"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    control:StartPageBootstrapBehavior.IsAttached="true"
+    control:StartPageBootstrapper.IsAttached="true"
     >
 </UserControl>

@@ -1,3 +1,6 @@
+# 1.8
+- Also added file menu entry to open items from there.
+
 # 1.7
 - Added support for VS2010 and VS2012 (bug #1)
 - Replaced custom start page with loading original start page and change right panel. (bug #16)

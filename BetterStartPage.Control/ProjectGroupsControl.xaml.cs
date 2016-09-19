@@ -11,29 +11,12 @@ namespace BetterStartPage.Control
     public partial class ProjectGroupsControl
     {
         public ProjectGroupsControl()
-            : this(null)
-        {
-        }
-
-        public ProjectGroupsControl(DTE2 dte)
         {
             InitializeComponent();
 
-            var ideAccess = new VsIdeAccess(dte);
-            ISettingsProvider settingsProvider;
-            if (dte == null)
-            {
-                settingsProvider = new DummySettingsProvider();
-            }
-            else
-            {
-                settingsProvider = new VsSettingsProvider(new ServiceProvider((IServiceProvider)dte));
-            }
-
             try
             {
-                var viewModel = new ProjectGroupsViewModel(ideAccess, settingsProvider);
-                DataContext = viewModel;
+                DataContext = Ioc.Instance.Resolve<ProjectGroupsViewModel>();
             }
             catch (Exception)
             {
@@ -42,7 +25,7 @@ namespace BetterStartPage.Control
                     "Group Loading failed", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.Yes);
                 if (result == MessageBoxResult.Yes)
                 {
-                    settingsProvider.Reset();
+                    Ioc.Instance.Resolve<ISettingsProvider>().Reset();
                 }
             }
         }

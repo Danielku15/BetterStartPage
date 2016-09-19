@@ -54,4 +54,11 @@ You can reorder or delete groups and projects by using the action buttons beside
     <CustomExtension Type="StartPage">StartPage.xaml</CustomExtension>
     <VsPackage>StartPage.pkgdef</VsPackage>
   </Content>
-</Vsix>
+</Vsix><!--
+    Please add the following element to PackageManifest\\Assets:
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+-->
+<!--
+    Please add the following element to PackageManifest\\Dependencies:
+    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
+-->

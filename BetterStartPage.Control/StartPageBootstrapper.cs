@@ -2,15 +2,18 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using BetterStartPage.Control.Settings;
+using BetterStartPage.Control.ViewModel;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 
 namespace BetterStartPage.Control
 {
-    public class StartPageBootstrapBehavior
+    public class StartPageBootstrapper
     {
         public static readonly DependencyProperty IsAttachedProperty = DependencyProperty.RegisterAttached(
-            "IsAttached", typeof(bool), typeof(StartPageBootstrapBehavior), new PropertyMetadata(default(bool), OnAttached));
+            "IsAttached", typeof(bool), typeof(StartPageBootstrapper), new PropertyMetadata(default(bool), OnAttached));
         
         public static void SetIsAttached(DependencyObject element, bool value)
         {
@@ -22,28 +25,53 @@ namespace BetterStartPage.Control
             return (bool) element.GetValue(IsAttachedProperty);
         }
 
-
         private static void OnAttached(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            Initialize();
             var userControl = (UserControl) d;
-            var dte = Utilities.GetDTE();
+            var dte = Ioc.Instance.Resolve<DTE2>();
             switch (dte.Version)
             {
                 case "10.0":
-                    Bootstrap2010(userControl, dte);
+                    Bootstrap2010(userControl);
                     break;
                 case "11.0":
-                    Bootstrap2012(userControl, dte);
+                    Bootstrap2012(userControl);
                     break;
                 case "12.0":
                 case "14.0":
                 default:
-                    Bootstrap2015(userControl, dte);
+                    Bootstrap2015(userControl);
                     break;
             }
         }
 
-        private static void Bootstrap2010(UserControl userControl, DTE2 dte)
+        private static bool _initialized;
+        public static void Initialize()
+        {
+            if (_initialized)
+            {
+                return;
+            }
+            _initialized = true;
+
+            var dte = Package.GetGlobalService(typeof(DTE)) as DTE2;
+            Ioc.Instance.RegisterInstance(dte);
+            Ioc.Instance.Register<IIdeAccess, VsIdeAccess>();
+
+            if (dte != null)
+            {
+                Ioc.Instance.Register<ISettingsProvider, VsSettingsProvider>();
+            }
+            else
+            {
+                Ioc.Instance.Register<IIdeAccess, DummySettingsProvider>();
+            }
+
+            Ioc.Instance.Register<ProjectGroupsViewModel>();
+        }
+
+        private static void Bootstrap2010(UserControl userControl)
         {
             var startPage = (Grid)Application.LoadComponent(new Uri("Microsoft.VisualStudio.Shell.UI.Internal;component/StartPage.xaml", UriKind.Relative));
             userControl.Content = startPage;
@@ -64,12 +92,12 @@ namespace BetterStartPage.Control
                     container.HorizontalAlignment = HorizontalAlignment.Stretch;
                     container.VerticalAlignment = VerticalAlignment.Stretch;
                     container.Children.Clear();
-                    container.Children.Add(new ProjectGroupsControl(dte));
+                    container.Children.Add(new ProjectGroupsControl());
                 }
             }
         }
 
-        private static void Bootstrap2012(UserControl userControl, DTE2 dte)
+        private static void Bootstrap2012(UserControl userControl)
         {
             var startPage = (Grid)Application.LoadComponent(new Uri("Microsoft.VisualStudio.Shell.UI.Internal;component/StartPage.xaml", UriKind.Relative));
             userControl.Content = startPage;
@@ -90,12 +118,12 @@ namespace BetterStartPage.Control
                     container.HorizontalAlignment = HorizontalAlignment.Stretch;
                     container.VerticalAlignment = VerticalAlignment.Stretch;
                     container.Children.Clear();
-                    container.Children.Add(new ProjectGroupsControl(dte));
+                    container.Children.Add(new ProjectGroupsControl());
                 }
             }
         }
 
-        private static void Bootstrap2015(UserControl userControl, DTE2 dte)
+        private static void Bootstrap2015(UserControl userControl)
         {
             var startPage = (Grid)Application.LoadComponent(new Uri("Microsoft.VisualStudio.Shell.UI.Internal;component/StartPage.xaml", UriKind.Relative));
             userControl.Content = startPage;
@@ -110,7 +138,7 @@ namespace BetterStartPage.Control
             if (rightPanel != null)
             {
                 rightPanel.ContentTemplate = null;
-                rightPanel.Content = new ProjectGroupsControl(dte);
+                rightPanel.Content = new ProjectGroupsControl();
             }
         }
     }
