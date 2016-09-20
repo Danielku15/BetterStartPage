@@ -1,3 +1,6 @@
+# 1.10
+- Ensure ProjectColumn setting is loaded from settings storage (bug #18)
+
 # 1.9
 - Specify the number of columns for projects within group. 
 - Fixed problem where renaming projects causes solutions to be opened as files. 
