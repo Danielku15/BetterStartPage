@@ -368,6 +368,7 @@ namespace BetterStartPage.Control.ViewModel
 
             Groups = new ObservableCollection<ProjectGroup>(groups ?? new ProjectGroup[0]);
             GroupColumns = _settingsProvider.ReadInt32("GroupColumns", 1);
+            ProjectColumns = _settingsProvider.ReadInt32("ProjectColumns");
         }
 
         private void PersistSettings()
@@ -384,6 +385,7 @@ namespace BetterStartPage.Control.ViewModel
             }
 
             _settingsProvider.WriteInt32("GroupColumns", GroupColumns);
+            _settingsProvider.WriteInt32("ProjectColumns", ProjectColumns);
         }
 
         #endregion
