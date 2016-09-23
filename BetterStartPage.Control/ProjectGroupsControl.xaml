@@ -282,6 +282,7 @@
                                                     ToolTip="Rename" />
                                                 <view:ImageButton
                                                     Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
                                                     Image="pack://application:,,,/BetterStartPage.Control;component/Images/DeleteHS.png"
                                                     ToolTip="Delete" />
                                                 <view:ImageButton
