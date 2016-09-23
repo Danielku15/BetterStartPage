@@ -1,3 +1,6 @@
+# 1.11
+- Fixed broken delete button (bug #19)
+
 # 1.10
 - Ensure ProjectColumn setting is loaded from settings storage (bug #18)
 
