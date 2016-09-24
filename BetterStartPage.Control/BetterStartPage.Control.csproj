@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="ProjectGroupsMenu.cs" />
     <Compile Include="Ioc.cs" />
+    <Compile Include="View\AutoGrid.cs" />
     <Compile Include="View\ImageButton.cs" />
     <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="View\RelativeFontSizeHelper.cs" />

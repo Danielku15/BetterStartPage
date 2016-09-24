@@ -158,7 +158,7 @@
         <ItemsControl Background="{DynamicResource {x:Static control:VsResources.StartPageTabBackgroundKey}}" ItemsSource="{Binding Groups}">
             <ItemsControl.Template>
                 <ControlTemplate>
-                    <UniformGrid 
+                    <view:AutoGrid 
                         IsItemsHost="True"
                         Columns="{Binding GroupColumns}" />
                 </ControlTemplate>

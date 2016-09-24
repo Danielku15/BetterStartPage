@@ -1,5 +1,6 @@
 # 1.11
 - Fixed broken delete button (bug #19)
+- Replaced uniform grid with custom grid for dynamic row height in fixed column grid (bug #20)
 
 # 1.10
 - Ensure ProjectColumn setting is loaded from settings storage (bug #18)
