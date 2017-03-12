@@ -17,7 +17,6 @@ namespace BetterStartPage.Control.ViewModel
         private readonly IIdeAccess _ideAccess;
         private int _groupColumns;
         private ObservableCollection<ProjectGroup> _groups;
-        private int _groupRows;
         private bool _isEditMode;
         private readonly ISettingsProvider _settingsProvider;
         private int _projectColumns;
@@ -25,7 +24,7 @@ namespace BetterStartPage.Control.ViewModel
         public int GroupColumns
         {
             get { return _groupColumns; }
-            private set
+            set
             {
                 if (value == _groupColumns) return;
                 _groupColumns = Math.Max(1, value);
@@ -55,6 +54,11 @@ namespace BetterStartPage.Control.ViewModel
                 _groups = value;
                 OnPropertyChanged();
             }
+        }
+
+        public bool IsEmpty
+        {
+            get { return Groups.Count == 0; }
         }
 
         public bool IsEditMode
@@ -367,6 +371,7 @@ namespace BetterStartPage.Control.ViewModel
             }
 
             Groups = new ObservableCollection<ProjectGroup>(groups ?? new ProjectGroup[0]);
+            Groups.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(IsEmpty));
             GroupColumns = _settingsProvider.ReadInt32("GroupColumns", 1);
             ProjectColumns = _settingsProvider.ReadInt32("ProjectColumns");
         }

@@ -14,6 +14,7 @@ namespace BetterStartPage.Control.View
             var grid = (Panel)d;
             grid.InvalidateArrange();
             grid.InvalidateVisual();
+            grid.InvalidateMeasure();
         }
 
         private static object CoerceColumns(DependencyObject d, object basevalue)
@@ -62,6 +63,12 @@ namespace BetterStartPage.Control.View
                     column = 0;
                 }
             }
+
+            if (column < columns)
+            {
+                y += maxHeight;
+            }
+
             return new Size(availableSize.Width, y);
         }
 

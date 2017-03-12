@@ -9,6 +9,7 @@ namespace BetterStartPage.Control
         public static object DirectoryLinkStyleKey { get; set; }
         public static object StartPageTabBackgroundKey { get; set; }
         public static object GroupHeaderStyleKey { get; set; }
+        public static object GroupHeaderForegroundKey { get; set; }
 
         static VsResources()
         {
@@ -17,6 +18,7 @@ namespace BetterStartPage.Control
             DirectoryLinkStyleKey = VsBrushes.StartPageTextHeadingKey;
             StartPageTabBackgroundKey = VsBrushes.StartPageTabBackgroundKey;
             GroupHeaderStyleKey = "StartPage.AnnouncementsHeadingTextStyle";
+            GroupHeaderForegroundKey = "";
         }
     }
 }

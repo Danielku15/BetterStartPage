@@ -182,11 +182,12 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <Grid Margin="0,30,0,5">
+                            <Grid Margin="0,15,0,5">
                                 
                                 <!-- Normal Display of Group Header -->
                                 <StackPanel AllowDrop="True" Orientation="Horizontal">
                                     <TextBlock Style="{DynamicResource {x:Static control:VsResources.GroupHeaderStyleKey}}" 
+                                               Foreground="{DynamicResource {x:Static control:VsResources.GroupHeaderForegroundKey}}"
                                                Text="{Binding Title}" />
                                     <view:ImageButton
                                         Margin="5"
@@ -308,6 +309,14 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <!-- Empty Info -->
+        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" Height="100"
+                Background="#F3F4F6">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                No favourites configured. Right click here to enable the edit mode. 
+            </TextBlock>
+        </Border>
+        
         <StackPanel
             Grid.Row="2"
             Margin="5,5,5,30"

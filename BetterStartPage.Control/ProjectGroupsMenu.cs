@@ -82,6 +82,11 @@ namespace BetterStartPage.Control
                 Flatten();
             }
 
+            if (_flattened.Count == 0)
+            {
+                return;
+            }
+
             var indexForDisplay = isRootItem ? 0 : matchedCommand.MatchedCommandId - BetterStartPageMenuOpenFavouritePlaceholderCommand;
 
             var x = _flattened[indexForDisplay];

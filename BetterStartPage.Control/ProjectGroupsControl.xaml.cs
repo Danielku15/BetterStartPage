@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Input;
 using BetterStartPage.Control.Settings;
 using BetterStartPage.Control.ViewModel;
 using EnvDTE80;
