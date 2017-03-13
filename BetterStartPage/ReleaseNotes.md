@@ -1,5 +1,9 @@
+# 1.13
+- Added export/import feature for easier migration. 
+
 # 1.12
 - Visual Studio 2017 Support (bug #23)
+- Removed Visual Studio 2010 support in favor of 2017 (VSIX manifest incompatibility)
 
 # 1.11
 - Fixed broken delete button (bug #19)

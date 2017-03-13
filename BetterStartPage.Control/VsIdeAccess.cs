@@ -8,6 +8,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.Win32;
 
 namespace BetterStartPage.Control
 {
@@ -114,6 +115,68 @@ namespace BetterStartPage.Control
                 "File not found",
                 MessageBoxButton.YesNo, MessageBoxImage.Error
             ) == MessageBoxResult.Yes;
+        }
+
+        public string ShowExportConfigurationDialog()
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "BetterStartPage Configuration (*.bspc)|*.bspc";
+            if (dialog.ShowDialog().GetValueOrDefault())
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+
+        public string ShowImportConfigurationDialog()
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter = "BetterStartPage Configuration (*.bspc)|*.bspc";
+            if (dialog.ShowDialog().GetValueOrDefault())
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+
+        public void ShowExportResultDialog(string file, Exception error)
+        {
+            if (error != null)
+            {
+                MessageBox.Show(
+                    error.Message,
+                    $"Could not export configuration to '{file}'",
+                    MessageBoxButton.OK, MessageBoxImage.Error
+                );
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"The configuration was successfully exported to '{file}'",
+                    $"Configuration successfully exported",
+                    MessageBoxButton.OK, MessageBoxImage.Information
+                );
+            }
+        }
+
+        public void ShowImportResultDialog(string file, Exception error)
+        {
+            if (error != null)
+            {
+                MessageBox.Show(
+                    error.Message,
+                    $"Could not load configuration from '{file}'",
+                    MessageBoxButton.OK, MessageBoxImage.Error
+                );
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"The configuration was successfully imported from '{file}'",
+                    $"Configuration successfully imported",
+                    MessageBoxButton.OK, MessageBoxImage.Information
+                );
+            }
         }
     }
 }

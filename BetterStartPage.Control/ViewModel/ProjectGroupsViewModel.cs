@@ -53,6 +53,7 @@ namespace BetterStartPage.Control.ViewModel
                 if (Equals(value, _groups)) return;
                 _groups = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsEmpty));
             }
         }
 
@@ -97,6 +98,9 @@ namespace BetterStartPage.Control.ViewModel
         public ICommand IncreaseProjectColumnsCommand { get; }
         public ICommand DecreaseProjectColumnsCommand { get; }
 
+        public ICommand ExportConfigurationCommand { get; }
+        public ICommand ImportConfigurationCommand { get; }
+
         public ProjectGroupsViewModel(IIdeAccess ideAccess, ISettingsProvider settingsProvider)
         {
             _ideAccess = ideAccess;
@@ -123,7 +127,60 @@ namespace BetterStartPage.Control.ViewModel
             IncreaseProjectColumnsCommand = new RelayCommand(IncreaseProjectColumns);
             DecreaseProjectColumnsCommand = new RelayCommand(DecreaseProjectColumns, () => ProjectColumns > 0);
 
+            ExportConfigurationCommand = new RelayCommand(ExportConfiguration);
+            ImportConfigurationCommand = new RelayCommand(ImportConfiguration);
+
             Setup();
+        }
+
+        private void ImportConfiguration()
+        {
+            var file = _ideAccess.ShowImportConfigurationDialog();
+            if (!string.IsNullOrEmpty(file))
+            {
+                try
+                {
+                    var model = SettingsExportViewModel.Deserialize(File.ReadAllBytes(file));
+                    Groups = new ObservableCollection<ProjectGroup>(model.ProjectGroups ?? new ProjectGroup[0]);
+                    Groups.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(IsEmpty));
+                    GroupColumns = model.GroupColumns;
+                    ProjectColumns = model.ProjectColumns;
+
+                    PersistSettings();
+
+                    _ideAccess.ShowImportResultDialog(file);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Importing settings failed", e);
+                    _ideAccess.ShowImportResultDialog(file, e);
+                }
+            }
+        }
+
+        private void ExportConfiguration()
+        {
+            var file = _ideAccess.ShowExportConfigurationDialog();
+            if (!string.IsNullOrEmpty(file))
+            {
+                var model = new SettingsExportViewModel
+                {
+                    ProjectGroups = Groups.ToArray(),
+                    GroupColumns = GroupColumns,
+                    ProjectColumns = ProjectColumns
+                };
+
+                try
+                {
+                    File.WriteAllBytes(file, SettingsExportViewModel.Serialize(model));
+                    _ideAccess.ShowExportResultDialog(file);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Exporting settings failed", e);
+                    _ideAccess.ShowExportResultDialog(file, e);
+                }
+            }
         }
 
         private void DecreaseGroupColumns()

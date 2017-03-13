@@ -144,6 +144,12 @@
                 Header="Edit Mode"
                 IsCheckable="true"
                 IsChecked="{Binding IsEditMode}" />
+            <MenuItem
+                Header="Export Configuration"
+                Command="{Binding ExportConfigurationCommand}" />
+            <MenuItem
+                Header="Import Configuration"
+                Command="{Binding ImportConfigurationCommand}" />
         </ContextMenu>
     </UserControl.ContextMenu>
     

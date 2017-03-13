@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="ProjectGroupsMenu.cs" />
     <Compile Include="Ioc.cs" />
+    <Compile Include="Settings\SettingsExportViewModel.cs" />
     <Compile Include="ShellInitHelper.cs" />
     <Compile Include="View\AutoGrid.cs" />
     <Compile Include="View\ImageButton.cs" />
