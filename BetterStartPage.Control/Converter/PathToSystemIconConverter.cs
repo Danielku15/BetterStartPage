@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio.Shell;
 
 namespace BetterStartPage.Control.Converter
 {
@@ -49,38 +50,59 @@ namespace BetterStartPage.Control.Converter
         {
             // if file does not exist, create a temp file with the same file extension
             var isTemp = false;
-            if (!File.Exists(fileName) && !Directory.Exists(fileName))
-            {
-                isTemp = true;
-                fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + Path.GetExtension(fileName));
-                File.WriteAllText(fileName, string.Empty);
-            }
-
-            var shinfo = new SHFILEINFO();
-
-            var flags = SHGFI_SYSICONINDEX;
-            if (fileName.IndexOf(":", StringComparison.Ordinal) == -1)
-                flags = flags | SHGFI_USEFILEATTRIBUTES;
-            flags = flags | SHGFI_ICON | SHGFI_SMALLICON;
-
-            SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
-            var icon = Icon.FromHandle(shinfo.hIcon);
-            var bitmap = icon.ToBitmap();
-
-            IntPtr hBitmap = bitmap.GetHbitmap();
             try
             {
-                return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
+                if (!File.Exists(fileName) && !Directory.Exists(fileName))
+                {
+                    isTemp = true;
+                    fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + Path.GetExtension(fileName));
+                    File.WriteAllText(fileName, string.Empty);
+                }
+
+                var shinfo = new SHFILEINFO();
+
+                var flags = SHGFI_SYSICONINDEX;
+                if (fileName.IndexOf(":", StringComparison.Ordinal) == -1)
+                {
+                    flags = flags | SHGFI_USEFILEATTRIBUTES;
+                }
+                flags = flags | SHGFI_ICON | SHGFI_SMALLICON;
+
+                var hr = SHGetFileInfo(fileName, 0, ref shinfo, (uint) Marshal.SizeOf(shinfo), flags);
+                if (hr != IntPtr.Zero)
+                {
+                    Bitmap bitmap;
+                    using (var icon = Icon.FromHandle(shinfo.hIcon))
+                    {
+                        bitmap = icon.ToBitmap();
+                    }
+                    DestroyIcon(shinfo.hIcon);
+
+                    var hBitmap = bitmap.GetHbitmap();
+                    try
+                    {
+                        return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
+                            BitmapSizeOptions.FromEmptyOptions());
+                    }
+                    finally
+                    {
+                        DeleteObject(hBitmap);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ActivityLog.LogError("BetterStartPage", "Failed to create icon: " + e);
             }
             finally
             {
-                DeleteObject(hBitmap);
                 if (isTemp)
                 {
                     File.Delete(fileName);
                 }
             }
+
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -105,6 +127,9 @@ namespace BetterStartPage.Control.Converter
 
         [DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private extern static bool DestroyIcon(IntPtr handle);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct SHFILEINFO

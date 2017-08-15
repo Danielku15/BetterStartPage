@@ -1,3 +1,6 @@
+# 1.14
+- Added error handling for icon loading (bug #25)
+
 # 1.13
 - Added export/import feature for easier migration. 
 
