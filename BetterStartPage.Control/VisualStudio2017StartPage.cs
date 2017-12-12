@@ -1,6 +1,8 @@
 ﻿extern alias Shell15;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -204,7 +206,26 @@ namespace BetterStartPage.Control
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.ICodeContainerTelemetryLogger");
                 var codeContainerTelemetryLoggerType =
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerTelemetryLogger");
-                var codeContainerTelemetryLoggerConstuctor = codeContainerTelemetryLoggerType.GetConstructor(new Type[0]);
+                var codeContainerTelemetryLoggerConstuctor = codeContainerTelemetryLoggerType.GetConstructors().First();
+                var codeContainerTelemetryLoggerConstuctorParam = codeContainerTelemetryLoggerConstuctor.GetParameters().FirstOrDefault();
+                Expression[] newCodeContainerTelemetryLoggerParams;
+                if (codeContainerTelemetryLoggerConstuctorParam == null)
+                {
+                    newCodeContainerTelemetryLoggerParams = new Expression[0];
+                }
+                else if (codeContainerTelemetryLoggerConstuctorParam.ParameterType.FullName == "Microsoft.VisualStudio.PlatformUI.CodeContainerScenario")
+                {
+                    var startPageScenario = codeContainerTelemetryLoggerConstuctorParam.ParameterType.GetField("StartPage").GetValue(null);
+                    newCodeContainerTelemetryLoggerParams = new Expression[]
+                    {
+                        Expression.Constant(startPageScenario)
+                    };
+                }
+                else
+                {
+                    newCodeContainerTelemetryLoggerParams = new Expression[0];
+                    Debug.Fail("unclear what parameter is expected, needs update");
+                }
 
                 var codeContainerListViewModelType =
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerListViewModel");
@@ -240,7 +261,7 @@ namespace BetterStartPage.Control
                         Expression.Property(null, timeCategoryProviderInstanceProperty),
 
                         // new CodeContainerTelemetryLogger()
-                        Expression.New(codeContainerTelemetryLoggerConstuctor)
+                        Expression.New(codeContainerTelemetryLoggerConstuctor, newCodeContainerTelemetryLoggerParams)
                     ),
                     serviceProviderParameter
                 ).Compile();
