@@ -1,3 +1,6 @@
+# 1.15
+- Visual Studio 2017 Update 5 Support (bug #)
+
 # 1.14
 - Added error handling for icon loading (bug #25)
 

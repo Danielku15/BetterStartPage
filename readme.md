@@ -1,6 +1,6 @@
 # BetterStartPage
 
-This is a VS2013 like start page which replaces the news section by a custom project dashboard.
+This is a Visual Studio like start page which replaces the news section by a custom project dashboard.
 In the project dashboard you can organize your solutions and projects into different groups for fast access. 
 
 To edit the dashboard right-click on the empty area and enable the edit mode in the context menu. 
