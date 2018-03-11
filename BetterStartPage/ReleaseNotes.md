@@ -1,3 +1,6 @@
+# 1.16
+- Visual Studio 2017 Update 6 Support (bug #32)
+
 # 1.15
 - Visual Studio 2017 Update 5 Support (bug #)
 

@@ -29,7 +29,7 @@ namespace BetterStartPage.Control
         private static readonly Func<object, object> NewProjectsListViewModel_New;
         private static readonly Func<object, Task> NewProjectsListViewModel_SetMoreTemplatesTextRemoteSettingIfAvailableAsync;
         private static readonly Func<object, Task> NewProjectsListViewModel_LoadRecentTemplatesAsync;
-        private static readonly Func<IServiceProvider, object> CodeContainerListViewModel_New;
+        private static readonly Func<IServiceProvider, object, object> CodeContainerListViewModel_New;
 
         public static object StartPageTitleTextBrushKey
         {
@@ -56,6 +56,7 @@ namespace BetterStartPage.Control
             var uiInternalAssembly = Assembly.Load("Microsoft.VisualStudio.Shell.UI.Internal");
             var shellFrameworkAssembly = Assembly.Load("Microsoft.VisualStudio.Shell.Framework");
             var shell15Assembly = Assembly.Load("Microsoft.VisualStudio.Shell.15.0");
+            var asyncServiceProviderType = shellFrameworkAssembly.GetType("Microsoft.VisualStudio.Shell.IAsyncServiceProvider");
 
             // Start_GetTemplateChildInternal
             {
@@ -97,8 +98,6 @@ namespace BetterStartPage.Control
             var newProjectsListViewModelType =
                 uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.NewProjectsListViewModel");
             {
-                var asyncServiceProviderType = shellFrameworkAssembly.GetType("Microsoft.VisualStudio.Shell.IAsyncServiceProvider");
-
                 var messageDialogInterfaceType =
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.StartPage.NewProject.IMessageDialog");
                 var messageDialogType =
@@ -180,6 +179,11 @@ namespace BetterStartPage.Control
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerAccessManager");
                 var codeContainerAccessManagerConstructor =
                     codeContainerAccessManagerType.GetConstructor(new[] { typeof(System.IServiceProvider) });
+                if (codeContainerAccessManagerConstructor == null)
+                {
+                    codeContainerAccessManagerConstructor =
+                        codeContainerAccessManagerType.GetConstructor(new[] { asyncServiceProviderType });
+                }
 
                 var removalPromptProviderInterfaceType =
                     uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.IRemovalPromptProvider");
@@ -240,8 +244,15 @@ namespace BetterStartPage.Control
                 });
 
                 var serviceProviderParameter = Expression.Parameter(typeof(System.IServiceProvider), "serviceProvider");
+                var asyncServiceProviderParameter = Expression.Parameter(typeof(object), "asyncServiceProvider");
 
-                CodeContainerListViewModel_New = Expression.Lambda<Func<System.IServiceProvider, object>>(
+                var newCodeContainerAccessManagerConstructorParams =
+                    codeContainerAccessManagerConstructor.GetParameters()[0].ParameterType == serviceProviderParameter.Type
+                        ? (Expression)serviceProviderParameter
+                        : Expression.TypeAs(asyncServiceProviderParameter, asyncServiceProviderType);
+
+
+                CodeContainerListViewModel_New = Expression.Lambda<Func<System.IServiceProvider, object, object>>(
                     Expression.New(codeContainerListViewModelConstructor, // new CodeContainerListViewModel( 
                                                                           // new CodeContainerStorageManagerFactory(serviceProvider).Create()
                         Expression.Call(
@@ -249,7 +260,7 @@ namespace BetterStartPage.Control
                             codeContainerStorageManagerFactoryCreate),
 
                         // new CodeContainerAccessManager(serviceProvider)
-                        Expression.New(codeContainerAccessManagerConstructor, serviceProviderParameter),
+                        Expression.New(codeContainerAccessManagerConstructor, newCodeContainerAccessManagerConstructorParams),
 
                         // new RemovalPromptProvider(serviceProvider)
                         Expression.New(removalPromptProviderConstructor, serviceProviderParameter),
@@ -263,7 +274,8 @@ namespace BetterStartPage.Control
                         // new CodeContainerTelemetryLogger()
                         Expression.New(codeContainerTelemetryLoggerConstuctor, newCodeContainerTelemetryLoggerParams)
                     ),
-                    serviceProviderParameter
+                    serviceProviderParameter,
+                    asyncServiceProviderParameter
                 ).Compile();
             }
         }
@@ -311,8 +323,9 @@ namespace BetterStartPage.Control
                 {
                     await TaskScheduler.Default;
 
+                    var asyncProvider = Package.GetGlobalService(typeof(SAsyncServiceProvider));
                     var serviceProvider = Ioc.Instance.Resolve<IServiceProvider>();
-                    var codeContainerListViewModel = CodeContainerListViewModel_New(serviceProvider);
+                    var codeContainerListViewModel = CodeContainerListViewModel_New(serviceProvider, asyncProvider);
 
                     await Shell15.Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -320,7 +333,6 @@ namespace BetterStartPage.Control
                     if (newProjectsListView != null)
                     {
                         object newProjectsListViewDataContext = null;
-                        var asyncProvider = Package.GetGlobalService(typeof(SAsyncServiceProvider));
                         if (asyncProvider != null)
                         {
                             newProjectsListViewDataContext = NewProjectsListViewModel_New(asyncProvider);
