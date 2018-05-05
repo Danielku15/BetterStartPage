@@ -1,3 +1,6 @@
+# 1.17
+- Disabled "All Users" install to support auto-update
+
 # 1.16
 - Visual Studio 2017 Update 6 Support (bug #32)
 
