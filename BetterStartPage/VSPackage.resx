@@ -121,7 +121,7 @@
     <value>BetterStartPage</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>This is a VS2015 like start page which replaces the news section by a custom project dashboard.
+    <value>This is a Visual Studio like start page which replaces the news section by a custom project dashboard.
 In the project dashboard you can organize your solutions and projects into different groups for fast access. 
 
 To edit the dashboard right-click on the empty area and enable the edit mode in the context menu. 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using BetterStartPage.Control.Settings;
@@ -10,6 +11,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 
 namespace BetterStartPage.Control
 {
@@ -169,92 +171,101 @@ namespace BetterStartPage.Control
 
                 var shellInitHelper = new ShellInitHelper(shell, () =>
                 {
-                    try
+                    Shell15.Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                     {
-                        userControl.Content = Application.LoadComponent(new Uri("Microsoft.VisualStudio.Shell.UI.Internal;component/packages/startpage/controls/start.xaml", UriKind.Relative));
-
-                        VsResources.LinkStyleKey = VsBrushes.StartPageTextControlLinkSelectedKey;
-                        VsResources.LinkHoverStyleKey = VsBrushes.StartPageTextControlLinkSelectedHoverKey;
-                        VsResources.DirectoryLinkStyleKey = VsBrushes.StartPageTextHeadingKey;
-                        VsResources.StartPageTabBackgroundKey = VsBrushes.StartPageTabBackgroundKey;
-                        VsResources.GroupHeaderStyleKey = VisualStudio2017StartPage.TextBlockEnvironment122PercentFontSizeStyleKey;
-                        VsResources.GroupHeaderForegroundKey = VisualStudio2017StartPage.StartPageTitleTextBrushKey;
-
-                        VisualStudio2017StartPage.SetupDataContexts(userControl.Content);
-
-                        var mainPanel = VisualStudio2017StartPage.MainPanel(userControl.Content);
-                        if (mainPanel != null)
+                        try
                         {
-                            mainPanel.MaxWidth = double.PositiveInfinity;
-                            mainPanel.Margin = new Thickness(10, 0, 10, 0);
+                            await TaskScheduler.Default;
+                            await Shell15.Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                            // effect bar
-                            mainPanel.ColumnDefinitions[0].Width = new GridLength(30, GridUnitType.Pixel);
-                            mainPanel.ColumnDefinitions[0].MinWidth = 0;
+                            var startPage = await VisualStudio2017StartPage.CreateOriginalStartPage();
+                            userControl.Content = startPage;
 
-                            // recent/favorites
-                            mainPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-                            mainPanel.ColumnDefinitions[1].MinWidth = 400;
-                            mainPanel.ColumnDefinitions[1].MaxWidth = double.PositiveInfinity;
+                            VsResources.LinkStyleKey = VsBrushes.StartPageTextControlLinkSelectedKey;
+                            VsResources.LinkHoverStyleKey = VsBrushes.StartPageTextControlLinkSelectedHoverKey;
+                            VsResources.DirectoryLinkStyleKey = VsBrushes.StartPageTextHeadingKey;
+                            VsResources.StartPageTabBackgroundKey = VsBrushes.StartPageTabBackgroundKey;
+                            VsResources.GroupHeaderStyleKey = VisualStudio2017StartPage
+                                .TextBlockEnvironment122PercentFontSizeStyleKey;
+                            VsResources.GroupHeaderForegroundKey = VisualStudio2017StartPage.StartPageTitleTextBrushKey;
 
-                            // spacing
-                            mainPanel.ColumnDefinitions[2].Width = new GridLength(30, GridUnitType.Pixel);
-                            mainPanel.ColumnDefinitions[2].MinWidth = 0;
-
-                            // open/new project
-                            mainPanel.ColumnDefinitions[3].Width = GridLength.Auto;
-
-                            // effect bar
-                            mainPanel.ColumnDefinitions[4].Width = new GridLength(30, GridUnitType.Pixel);
-                            mainPanel.ColumnDefinitions[4].MinWidth = 0;
-                        }
-
-                        var mruPanel = VisualStudio2017StartPage.MRUPanel(userControl.Content);
-                        if (mruPanel != null)
-                        {
-                            var recentLabel = mruPanel.Children.OfType<Label>().FirstOrDefault();
-                            if (recentLabel != null)
+                            var mainPanel = VisualStudio2017StartPage.MainPanel(startPage);
+                            if (mainPanel != null)
                             {
-                                recentLabel.SetResourceReference(FrameworkElement.StyleProperty, VisualStudio2017StartPage.LabelEnvironment200PercentFontSizeStyleKey);
-                                recentLabel.Margin = new Thickness(0, 0, 0, 30);
+                                mainPanel.MaxWidth = double.PositiveInfinity;
+                                mainPanel.Margin = new Thickness(10, 0, 10, 0);
+
+                                // effect bar
+                                mainPanel.ColumnDefinitions[0].Width = new GridLength(30, GridUnitType.Pixel);
+                                mainPanel.ColumnDefinitions[0].MinWidth = 0;
+
+                                // recent/favorites
+                                mainPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+                                mainPanel.ColumnDefinitions[1].MinWidth = 400;
+                                mainPanel.ColumnDefinitions[1].MaxWidth = double.PositiveInfinity;
+
+                                // spacing
+                                mainPanel.ColumnDefinitions[2].Width = new GridLength(30, GridUnitType.Pixel);
+                                mainPanel.ColumnDefinitions[2].MinWidth = 0;
+
+                                // open/new project
+                                mainPanel.ColumnDefinitions[3].Width = GridLength.Auto;
+
+                                // effect bar
+                                mainPanel.ColumnDefinitions[4].Width = new GridLength(30, GridUnitType.Pixel);
+                                mainPanel.ColumnDefinitions[4].MinWidth = 0;
+                            }
+
+                            var mruPanel = VisualStudio2017StartPage.MRUPanel(startPage);
+                            if (mruPanel != null)
+                            {
+                                var recentLabel = mruPanel.Children.OfType<Label>().FirstOrDefault();
+                                if (recentLabel != null)
+                                {
+                                    recentLabel.SetResourceReference(FrameworkElement.StyleProperty,
+                                        VisualStudio2017StartPage.LabelEnvironment200PercentFontSizeStyleKey);
+                                    recentLabel.Margin = new Thickness(0, 0, 0, 30);
+                                }
+                            }
+
+                            var gettingStarted = VisualStudio2017StartPage.GettingStartedControl(startPage);
+                            if (gettingStarted != null)
+                            {
+                                var favouritesPanel = new Grid();
+                                favouritesPanel.RowDefinitions.Add(new RowDefinition
+                                {
+                                    Height = GridLength.Auto
+                                });
+                                favouritesPanel.RowDefinitions.Add(new RowDefinition
+                                {
+                                    Height = new GridLength(1, GridUnitType.Star)
+                                });
+
+                                var label = new TextBlock
+                                {
+                                    Text = "Favorites",
+                                    Margin = new Thickness(0, -9, 0, 10)
+                                };
+                                label.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty,
+                                    VisualStudio2017StartPage.StartPageTitleTextBrushKey);
+                                label.SetResourceReference(FrameworkElement.StyleProperty,
+                                    VisualStudio2017StartPage.TextBlockEnvironment200PercentFontSizeStyleKey);
+                                favouritesPanel.Children.Add(label);
+
+                                var projectGroupsControl = new ProjectGroupsControl();
+                                projectGroupsControl.Margin = new Thickness(8, 0, 8, 30);
+                                Grid.SetRow(projectGroupsControl, 1);
+                                favouritesPanel.Children.Add(projectGroupsControl);
+
+                                gettingStarted.FindAncestor<Grid>().Children.Add(favouritesPanel);
+                                gettingStarted.Visibility = Visibility.Collapsed;
                             }
                         }
-
-                        var gettingStarted = VisualStudio2017StartPage.GettingStartedControl(userControl.Content);
-                        if (gettingStarted != null)
+                        catch (Exception e)
                         {
-                            var favouritesPanel = new Grid();
-                            favouritesPanel.RowDefinitions.Add(new RowDefinition
-                            {
-                                Height = GridLength.Auto
-                            });
-                            favouritesPanel.RowDefinitions.Add(new RowDefinition
-                            {
-                                Height = new GridLength(1, GridUnitType.Star)
-                            });
-
-                            var label = new TextBlock
-                            {
-                                Text = "Favorites",
-                                Margin = new Thickness(0, -9, 0, 10)
-                            };
-                            label.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, VisualStudio2017StartPage.StartPageTitleTextBrushKey);
-                            label.SetResourceReference(FrameworkElement.StyleProperty, VisualStudio2017StartPage.TextBlockEnvironment200PercentFontSizeStyleKey);
-                            favouritesPanel.Children.Add(label);
-
-                            var projectGroupsControl = new ProjectGroupsControl();
-                            projectGroupsControl.Margin = new Thickness(8, 0, 8, 30);
-                            Grid.SetRow(projectGroupsControl, 1);
-                            favouritesPanel.Children.Add(projectGroupsControl);
-
-                            gettingStarted.FindAncestor<Grid>().Children.Add(favouritesPanel);
-                            gettingStarted.Visibility = Visibility.Collapsed;
+                            ActivityLog.LogError("StartPage", e.ToString());
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        ActivityLog.LogError("StartPage", e.ToString());
-                    }
+                    });
                 });
                 shellInitHelper.Setup();
             }

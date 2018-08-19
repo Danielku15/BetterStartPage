@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="E6BD5606-CCEC-4364-B60B-8FB70BA3575B" Version="1.17" Language="en-US" Publisher="Danielku15" />
+        <Identity Id="E6BD5606-CCEC-4364-B60B-8FB70BA3575B" Version="1.18" Language="en-US" Publisher="Danielku15" />
         <DisplayName>BetterStartPage</DisplayName>
-        <Description xml:space="preserve">This is a VS2015 like start page which replaces the news section by a custom project dashboard.
+        <Description xml:space="preserve">This is a Visual Studio like start page which replaces the news section by a custom project dashboard.
 In the project dashboard you can organize your solutions and projects into different groups for fast access. 
 
 To edit the dashboard right-click on the empty area and enable the edit mode in the context menu. 

@@ -1,3 +1,7 @@
+# 1.18
+- Reworked start page creation to be more future-proof
+- Visual Studio 2017 Update 8 Support (bug #36)
+
 # 1.17
 - Disabled "All Users" install to support auto-update
 

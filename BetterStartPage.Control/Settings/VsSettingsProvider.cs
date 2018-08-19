@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using EnvDTE80;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -32,7 +31,7 @@ namespace BetterStartPage.Control.Settings
 
         public VsSettingsProvider(DTE2 dte)
         {
-            var serviceProvider = new ServiceProvider((IServiceProvider)dte);
+            var serviceProvider = new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte);
             var settingsManager = (IVsSettingsManager)serviceProvider.GetService(typeof(SVsSettingsManager));
             settingsManager.GetWritableSettingsStore((uint)__VsSettingsScope.SettingsScope_UserSettings, out _settingsStore);
         }

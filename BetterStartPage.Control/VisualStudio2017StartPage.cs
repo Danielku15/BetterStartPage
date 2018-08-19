@@ -2,18 +2,17 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Services;
+using System.Windows.Markup;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.PlatformUI.Packages.StartPage;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
-using Shell15::Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.Interop;
 using Expression = System.Linq.Expressions.Expression;
-using Task = System.Threading.Tasks.Task;
 
 namespace BetterStartPage.Control
 {
@@ -24,13 +23,6 @@ namespace BetterStartPage.Control
     public static class VisualStudio2017StartPage
     {
         private static readonly Func<object, string, object> Start_GetTemplateChildInternal;
-
-        private static readonly Func<object, object> CodeContainerProviderService_CodeContainerProviders;
-        private static readonly Func<object, object> NewProjectsListViewModel_New;
-        private static readonly Func<object, Task> NewProjectsListViewModel_SetMoreTemplatesTextRemoteSettingIfAvailableAsync;
-        private static readonly Func<object, Task> NewProjectsListViewModel_LoadRecentTemplatesAsync;
-        private static readonly Func<IServiceProvider, object, object> CodeContainerListViewModel_New;
-
         public static object StartPageTitleTextBrushKey
         {
             get { return Shell15.Microsoft.VisualStudio.PlatformUI.StartPageColors.StartPageTitleTextBrushKey; }
@@ -53,336 +45,217 @@ namespace BetterStartPage.Control
 
         static VisualStudio2017StartPage()
         {
-            var uiInternalAssembly = Assembly.Load("Microsoft.VisualStudio.Shell.UI.Internal");
-            var shellFrameworkAssembly = Assembly.Load("Microsoft.VisualStudio.Shell.Framework");
-            var shell15Assembly = Assembly.Load("Microsoft.VisualStudio.Shell.15.0");
-            var asyncServiceProviderType = shellFrameworkAssembly.GetType("Microsoft.VisualStudio.Shell.IAsyncServiceProvider");
-
-            // Start_GetTemplateChildInternal
+            try
             {
-                var startType = uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.Packages.StartPage.Start");
+                // Start_GetTemplateChildInternal
+                {
+                    var startType = typeof(Start);
+                    var frameworkElementParameter = Expression.Parameter(typeof(object), "frameworkElement");
+                    var nameParameter = Expression.Parameter(typeof(string), "name");
+                    var getTemplateChildMethodGeneric = typeof(Start)
+                            .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                            .First(
+                                m => m.Name == "GetTemplateChild" && m.IsGenericMethodDefinition)
+                        ;
+                    var getTemplateChildMethod = getTemplateChildMethodGeneric.MakeGenericMethod(typeof(object));
 
-                var frameworkElementParameter = Expression.Parameter(typeof(object), "frameworkElement");
-                var nameParameter = Expression.Parameter(typeof(string), "name");
-                var getTemplateChildMethodGeneric = startType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-                        .First(
-                            m => m.Name == "GetTemplateChild" && m.IsGenericMethodDefinition)
-                    ;
-                var getTemplateChildMethod = getTemplateChildMethodGeneric.MakeGenericMethod(typeof(object));
-
-                Start_GetTemplateChildInternal = Expression.Lambda<Func<object, string, object>>(
-                    Expression.Call(Expression.TypeAs(frameworkElementParameter, startType), getTemplateChildMethod,
-                        nameParameter),
-                    frameworkElementParameter, nameParameter
-                ).Compile();
-            }
-
-            // CodeContainerProviderService_CodeContainerProviders
-            {
-                var codeContainerProviderServiceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.Services.CodeContainerProviderService");
-                var codeContainerProvidersProperty =
-                    codeContainerProviderServiceType.GetProperty("CodeContainerProviders",
-                        BindingFlags.Instance | BindingFlags.NonPublic);
-
-                var codeContainerProviderServiceParameter = Expression.Parameter(typeof(object), "codeContainerProviderService");
-
-                CodeContainerProviderService_CodeContainerProviders =
-                    Expression.Lambda<Func<object, object>>(
-                        Expression.Property(Expression.TypeAs(codeContainerProviderServiceParameter, codeContainerProviderServiceType), codeContainerProvidersProperty),
-                        codeContainerProviderServiceParameter
+                    Start_GetTemplateChildInternal = Expression.Lambda<Func<object, string, object>>(
+                        Expression.Call(Expression.TypeAs(frameworkElementParameter, startType), getTemplateChildMethod,
+                            nameParameter),
+                        frameworkElementParameter, nameParameter
                     ).Compile();
-            }
-
-            // NewProjectsListViewModel_New
-            var newProjectsListViewModelType =
-                uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.NewProjectsListViewModel");
-            {
-                var messageDialogInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.StartPage.NewProject.IMessageDialog");
-                var messageDialogType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.StartPage.NewProject.MessageDialog");
-                var messageDialogConstructor = messageDialogType.GetConstructor(new Type[0]);
-
-                var newProjectTelemetryLoggerInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.Telemetry.INewProjectTelemetryLogger");
-                var newProjectTelemetryLoggerType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.Telemetry.NewProjectTelemetryLogger");
-                var newProjectTelemetryLoggerConstructor = newProjectTelemetryLoggerType.GetConstructor(new Type[0]);
-
-                var newProjectsListViewModelConstructor =
-                    newProjectsListViewModelType.GetConstructor(new[]
-                    {
-                        asyncServiceProviderType,
-                        messageDialogInterfaceType,
-                        newProjectTelemetryLoggerInterfaceType
-                    });
-
-                var asyncServiceProviderParameter = Expression.Parameter(typeof(object),
-                    "asyncServiceProvider");
-
-                NewProjectsListViewModel_New = Expression.Lambda<Func<object, object>>(
-                    Expression.New(newProjectsListViewModelConstructor,
-                        Expression.TypeAs(asyncServiceProviderParameter, asyncServiceProviderType),
-                        Expression.New(messageDialogConstructor),
-                        Expression.New(newProjectTelemetryLoggerConstructor)
-                    ),
-                    asyncServiceProviderParameter
-                ).Compile();
-            }
-
-            // NewProjectsListViewModel_SetMoreTemplatesTextRemoteSettingIfAvailableAsync
-            {
-                var viewModelParameter = Expression.Parameter(typeof(object), "viewModel");
-
-                var setMoreTemplatesTextRemoteSettingIfAvailableAsync =
-                    newProjectsListViewModelType.GetMethod("SetMoreTemplatesTextRemoteSettingIfAvailableAsync",
-                        BindingFlags.Instance | BindingFlags.NonPublic);
-
-                NewProjectsListViewModel_SetMoreTemplatesTextRemoteSettingIfAvailableAsync =
-                    Expression.Lambda<Func<object, Task>>(
-                        Expression.Call(Expression.TypeAs(viewModelParameter, newProjectsListViewModelType),
-                            setMoreTemplatesTextRemoteSettingIfAvailableAsync),
-                        viewModelParameter
-                    ).Compile();
-            }
-
-            // NewProjectsListViewModel_LoadRecentTemplatesAsync
-            {
-                var viewModelParameter = Expression.Parameter(typeof(object), "viewModel");
-
-                var loadRecentTemplatesAsync = newProjectsListViewModelType.GetMethod("LoadRecentTemplatesAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
-
-                NewProjectsListViewModel_LoadRecentTemplatesAsync = Expression.Lambda<Func<object, Task>>(
-                    Expression.Call(Expression.TypeAs(viewModelParameter, newProjectsListViewModelType),
-                        loadRecentTemplatesAsync),
-                    viewModelParameter
-                ).Compile();
-            }
-
-            // CodeContainerListViewModel_New           
-            {
-                var codeContainerStorageManagerInterfaceType =
-                    shellFrameworkAssembly.GetType("Microsoft.VisualStudio.Shell.CodeContainerManagement.ICodeContainerStorageManager");
-
-                var codeContainerStorageManagerFactoryType =
-                    shell15Assembly.GetType("Microsoft.VisualStudio.Shell.CodeContainerManagement.CodeContainerStorageManagerFactory");
-                var codeContainerStorageManagerFactoryConstructor =
-                    codeContainerStorageManagerFactoryType.GetConstructor(new[] { typeof(System.IServiceProvider) });
-                var codeContainerStorageManagerFactoryCreate = codeContainerStorageManagerFactoryType.GetMethod(
-                    "Create", BindingFlags.Instance | BindingFlags.Public);
-
-                var codeContainerAccessManagerInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.ICodeContainerAccessManager");
-                var codeContainerAccessManagerType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerAccessManager");
-                var codeContainerAccessManagerConstructor =
-                    codeContainerAccessManagerType.GetConstructor(new[] { typeof(System.IServiceProvider) });
-                if (codeContainerAccessManagerConstructor == null)
-                {
-                    codeContainerAccessManagerConstructor =
-                        codeContainerAccessManagerType.GetConstructor(new[] { asyncServiceProviderType });
                 }
-
-                var removalPromptProviderInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.IRemovalPromptProvider");
-                var removalPromptProviderType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.RemovalPromptProvider");
-                var removalPromptProviderConstructor =
-                    removalPromptProviderType.GetConstructor(new[] { typeof(System.IServiceProvider) });
-
-                var codeContainerIconMonikerProviderInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.ICodeContainerIconMonikerProvider");
-                var codeContainerIconMonikerProviderType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerIconMonikerProvider");
-                var codeContainerIconMonikerProviderConstuctor =
-                    codeContainerIconMonikerProviderType.GetConstructor(new[] { typeof(System.IServiceProvider) });
-
-                var timeCategoryProviderInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.ITimeCategoryProvider");
-                var timeCategoryProviderType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.TimeCategoryProvider");
-                var timeCategoryProviderInstanceProperty = timeCategoryProviderType.GetProperty("Instance",
-                    BindingFlags.Static | BindingFlags.Public);
-
-                var codeContainerTelemetryLoggerInterfaceType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.ICodeContainerTelemetryLogger");
-                var codeContainerTelemetryLoggerType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerTelemetryLogger");
-                var codeContainerTelemetryLoggerConstuctor = codeContainerTelemetryLoggerType.GetConstructors().First();
-                var codeContainerTelemetryLoggerConstuctorParam = codeContainerTelemetryLoggerConstuctor.GetParameters().FirstOrDefault();
-                Expression[] newCodeContainerTelemetryLoggerParams;
-                if (codeContainerTelemetryLoggerConstuctorParam == null)
-                {
-                    newCodeContainerTelemetryLoggerParams = new Expression[0];
-                }
-                else if (codeContainerTelemetryLoggerConstuctorParam.ParameterType.FullName == "Microsoft.VisualStudio.PlatformUI.CodeContainerScenario")
-                {
-                    var startPageScenario = codeContainerTelemetryLoggerConstuctorParam.ParameterType.GetField("StartPage").GetValue(null);
-                    newCodeContainerTelemetryLoggerParams = new Expression[]
-                    {
-                        Expression.Constant(startPageScenario)
-                    };
-                }
-                else
-                {
-                    newCodeContainerTelemetryLoggerParams = new Expression[0];
-                    Debug.Fail("unclear what parameter is expected, needs update");
-                }
-
-                var codeContainerListViewModelType =
-                    uiInternalAssembly.GetType("Microsoft.VisualStudio.PlatformUI.CodeContainerListViewModel");
-                var codeContainerListViewModelConstructor = codeContainerListViewModelType.GetConstructor(new[]
-                {
-                    codeContainerStorageManagerInterfaceType,
-                    codeContainerAccessManagerInterfaceType,
-                    removalPromptProviderInterfaceType,
-                    codeContainerIconMonikerProviderInterfaceType,
-                    timeCategoryProviderInterfaceType,
-                    codeContainerTelemetryLoggerInterfaceType
-                });
-
-                var serviceProviderParameter = Expression.Parameter(typeof(System.IServiceProvider), "serviceProvider");
-                var asyncServiceProviderParameter = Expression.Parameter(typeof(object), "asyncServiceProvider");
-
-                var newCodeContainerAccessManagerConstructorParams =
-                    codeContainerAccessManagerConstructor.GetParameters()[0].ParameterType == serviceProviderParameter.Type
-                        ? (Expression)serviceProviderParameter
-                        : Expression.TypeAs(asyncServiceProviderParameter, asyncServiceProviderType);
-
-
-                CodeContainerListViewModel_New = Expression.Lambda<Func<System.IServiceProvider, object, object>>(
-                    Expression.New(codeContainerListViewModelConstructor, // new CodeContainerListViewModel( 
-                                                                          // new CodeContainerStorageManagerFactory(serviceProvider).Create()
-                        Expression.Call(
-                            Expression.New(codeContainerStorageManagerFactoryConstructor, serviceProviderParameter),
-                            codeContainerStorageManagerFactoryCreate),
-
-                        // new CodeContainerAccessManager(serviceProvider)
-                        Expression.New(codeContainerAccessManagerConstructor, newCodeContainerAccessManagerConstructorParams),
-
-                        // new RemovalPromptProvider(serviceProvider)
-                        Expression.New(removalPromptProviderConstructor, serviceProviderParameter),
-
-                        // new CodeContainerIconMonikerProvider(serviceProvider)
-                        Expression.New(codeContainerIconMonikerProviderConstuctor, serviceProviderParameter),
-
-                        // TimeCategoryProvider.Instance
-                        Expression.Property(null, timeCategoryProviderInstanceProperty),
-
-                        // new CodeContainerTelemetryLogger()
-                        Expression.New(codeContainerTelemetryLoggerConstuctor, newCodeContainerTelemetryLoggerParams)
-                    ),
-                    serviceProviderParameter,
-                    asyncServiceProviderParameter
-                ).Compile();
+            }
+            catch (Exception e)
+            {
+                ActivityLog.LogError("StartPage", "Failed to load StartPage internals: " + e.Message);
             }
         }
 
-        public static UserControl GettingStartedControl(object parent)
+        public static UserControl GettingStartedControl(FrameworkElement parent)
         {
+            if (parent is Start start)
+            {
+                return start.GettingStartedControl;
+            }
             return GetTemplateChild<UserControl>(parent, "GettingStartedControl");
         }
 
-        public static Expander NewsExpander(object parent)
+        public static Panel MRUPanel(FrameworkElement parent)
         {
-            return GetTemplateChild<Expander>(parent, "NewsExpander");
-        }
-
-        public static UserControl CodeContainerProvidersListView(object parent)
-        {
-            return GetTemplateChild<UserControl>(parent, "CodeContainerProvidersListView");
-        }
-
-        public static UserControl NewProjectsListView(object parent)
-        {
-            return GetTemplateChild<UserControl>(parent, "NewProjectsListView");
-        }
-
-        public static Panel MRUPanel(object parent)
-        {
+            if (parent is Start start)
+            {
+                return start.MRUPanel;
+            }
             return GetTemplateChild<Panel>(parent, "MRUPanel");
         }
 
-        public static Grid MainPanel(object parent)
+        public static Grid MainPanel(FrameworkElement parent)
         {
             return GetTemplateChild<Grid>(parent, "MainPanel");
         }
 
-        private static T GetTemplateChild<T>(object parent, string name) where T : class
+        private static T GetTemplateChild<T>(FrameworkElement parent, string name) where T : class
         {
-            return Start_GetTemplateChildInternal((FrameworkElement)parent, name) as T;
+            return Start_GetTemplateChildInternal(parent, name) as T;
         }
 
-        public static void SetupDataContexts(object parent)
+        public static async Task<FrameworkElement> CreateOriginalStartPage()
         {
-            Shell15.Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            // create the original StartPageToolWindow
+            StartPageToolWindow startWindow = new StartPageToolWindow();
+            startWindow.LoadAndSet("Microsoft.VisualStudio.Shell.UI.Internal;component/packages/startpage/controls/start.xaml");
+
+            // search for the start component 
+            var result = FindStart(startWindow.Content);
+            if (result == null)
             {
-                try
+                return null;
+            }
+            var parent = result.Item1;
+            var start = result.Item2;
+
+            // The data context is initialized delayed in an async call. 
+            // we need to wait for the context to become available before we remove the start control from the toolwindow. 
+            if (start.MRUPanel.DataContext == null)
+            {
+                using (var waitForContext = new ManualResetEvent(false))
                 {
-                    await TaskScheduler.Default;
-
-                    var asyncProvider = Package.GetGlobalService(typeof(SAsyncServiceProvider));
-                    var serviceProvider = Ioc.Instance.Resolve<IServiceProvider>();
-                    var codeContainerListViewModel = CodeContainerListViewModel_New(serviceProvider, asyncProvider);
-
-                    await Shell15.Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-                    var newProjectsListView = NewProjectsListView(parent);
-                    if (newProjectsListView != null)
+                    void SetHandle(object sender, DependencyPropertyChangedEventArgs e)
                     {
-                        object newProjectsListViewDataContext = null;
-                        if (asyncProvider != null)
-                        {
-                            newProjectsListViewDataContext = NewProjectsListViewModel_New(asyncProvider);
-                            await NewProjectsListViewModel_SetMoreTemplatesTextRemoteSettingIfAvailableAsync(
-                                newProjectsListViewDataContext);
-                            await NewProjectsListViewModel_LoadRecentTemplatesAsync(newProjectsListViewDataContext);
-                        }
-                        newProjectsListView.DataContext = newProjectsListViewDataContext;
+                        waitForContext.Set();
                     }
 
-                    var codeContainerProvidersListView = CodeContainerProvidersListView(parent);
-                    if (codeContainerProvidersListView != null)
-                    {
-                        var codeContainerProviderService =
-                            serviceProvider.GetService(typeof(SVsCodeContainerProviderService));
-                        codeContainerProvidersListView.DataContext = codeContainerProviderService != null
-                            ? CodeContainerProviderService_CodeContainerProviders(codeContainerProviderService)
-                            : null;
-                    }
+                    start.MRUPanel.DataContextChanged += SetHandle;
+                    var sw = Stopwatch.StartNew();
+                    var timeout = await WaitHandleToTask(waitForContext, 3000);
+                    start.MRUPanel.DataContextChanged -= SetHandle;
+                    sw.Stop();
 
-                    var mruPanel = MRUPanel(parent);
-                    if (mruPanel != null)
+                    if (timeout)
                     {
-                        mruPanel.DataContext = codeContainerListViewModel;
+                        ActivityLog.LogWarning("StartPage", "Data Context did not become available in 3000ms");
+                        // NOTE: If this happens more often we could theoretically attempt to 
+                        // set the internal StartPageToolWindow.ContentHost 
+                        // this way the delayed datacontext initialization will still be able to access the 
+                        // startpage even though we detach it below. 
+                    }
+                    else
+                    {
+                        ActivityLog.LogInformation("StartPage", "Data Context became available in " + sw.ElapsedMilliseconds + "ms");
                     }
                 }
-                catch (Exception e)
-                {
-                    try
-                    {
-                        ActivityLog.LogError("StartPage", e.ToString());
-                    }
-                    catch
-                    {
-                    }
-                }
-            });
+            }
+
+            // We need to detach the start control and only return this one. 
+            // the StartPageToolWindow would try to load again the "BetterStartPage"
+            // causing a endless-loop and stackoverflow. 
+            DetachStart(parent, start);
+
+            return start;
         }
 
-
-        #region Service GUIDs
-
-        // for whatever reason using the interface contained in Microsoft.VisualStudio.Shell.15.0 leads to 
-        // error CS0234: The type or namespace name 'SAsyncServiceProvider' does not exist in the namespace 'Microsoft.VisualStudio.Shell.Interop' (are you missing an assembly reference?)
-        [Guid("944774C9-7422-4E87-B01C-189182C779A6")]
-        private interface SAsyncServiceProvider
+        public static System.Threading.Tasks.Task<bool> WaitHandleToTask(WaitHandle handle, int timeout)
         {
+            if (handle == null) throw new ArgumentNullException("handle");
+
+            var tcs = new TaskCompletionSource<bool>();
+            RegisteredWaitHandle shared = null;
+            RegisteredWaitHandle produced = ThreadPool.RegisterWaitForSingleObject(
+                handle,
+                (state, timedOut) =>
+                {
+                    tcs.SetResult(timedOut);
+
+                    while (true)
+                    {
+                        RegisteredWaitHandle consumed = Interlocked.CompareExchange(ref shared, null, null);
+                        if (consumed != null)
+                        {
+                            consumed.Unregister(null);
+                            break;
+                        }
+                    }
+                },
+                state: null,
+                millisecondsTimeOutInterval: timeout,
+                executeOnlyOnce: true);
+
+            // Publish the RegisteredWaitHandle so that the callback can see it.
+            Interlocked.CompareExchange(ref shared, produced, null);
+
+            return tcs.Task;
         }
 
-        #endregion
 
+        private static void DetachStart(FrameworkElement parent, Start start)
+        {
+            if (parent == null)
+            {
+                return;
+            }
+
+            if (parent is Decorator decorator)
+            {
+                decorator.Child = null;
+            }
+            else if (parent is ContentControl content)
+            {
+                content.Content = null;
+            }
+            else if (parent is Panel panel)
+            {
+                panel.Children.Remove(start);
+            }
+        }
+
+        private static Tuple<FrameworkElement, Start> FindStart(object element)
+        {
+            if (element == null)
+            {
+                return null;
+            }
+
+            if (element is Start start)
+            {
+                return Tuple.Create<FrameworkElement, Start>(null, start);
+            }
+
+            if (element is Decorator decorator)
+            {
+                if (decorator.Child is Start ds)
+                {
+                    return Tuple.Create<FrameworkElement, Start>(decorator, ds);
+                }
+
+                return FindStart(decorator.Child);
+            }
+
+            if (element is ContentControl content)
+            {
+                if (content.Content is Start cs)
+                {
+                    content.Content = null;
+                    return Tuple.Create<FrameworkElement, Start>(content, cs);
+                }
+
+                return FindStart(content.Content);
+            }
+
+            if (element is Panel panel)
+            {
+                foreach (var child in panel.Children)
+                {
+                    if (child is Start ps)
+                    {
+                        panel.Children.Remove(ps);
+                        return Tuple.Create<FrameworkElement, Start>(panel, ps);
+                    }
+                    return FindStart(child);
+                }
+            }
+
+            return null;
+        }
     }
 }

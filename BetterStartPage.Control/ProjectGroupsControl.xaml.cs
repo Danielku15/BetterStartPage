@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
-using System.Windows.Input;
 using BetterStartPage.Control.Settings;
 using BetterStartPage.Control.ViewModel;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
-using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
 namespace BetterStartPage.Control
 {
