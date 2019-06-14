@@ -1,0 +1,402 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:BetterStartPage.ViewModel"
+    xmlns:converter="clr-namespace:BetterStartPage.Converter"
+    xmlns:betterStartPage="clr-namespace:BetterStartPage"
+    xmlns:view="clr-namespace:BetterStartPage.View"
+    xmlns:shell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+    x:Class="BetterStartPage.View.ProjectGroupsControl"
+    d:DataContext="{d:DesignInstance viewModel:ProjectGroupsViewModel}"
+    d:DesignHeight="400"
+    d:DesignWidth="400"
+    Background="Transparent"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Link Buttons -->
+            <Style x:Key="LinkTextStyle" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkStyleKey}}" />
+                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.1" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
+                    </Trigger>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="{x:Type view:ImageButton}">
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type view:ImageButton}">
+                            <Grid VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    x:Name="PART_Border"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center">
+                                    <Image x:Name="PART_Image" Width="16" Height="16" Source="{TemplateBinding Image}" Stretch="None" SnapsToDevicePixels="True" />
+                                </Border>
+                                <TextBlock
+                                    x:Name="PART_Text"
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    Style="{StaticResource LinkTextStyle}"
+                                    TextWrapping="NoWrap">
+                                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                </TextBlock>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- Directory link -->
+            <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.DirectoryLinkStyleKey}}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="0.9" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Trigger>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="DirectoryLinkStyle" BasedOn="{StaticResource {x:Type view:ImageButton}}" TargetType="view:ImageButton">
+                <Setter Property="Margin" Value="8,0,0,0" />
+                <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type view:ImageButton}">
+                            <TextBlock
+                                x:Name="PART_Text"
+                                Style="{StaticResource DirectoryLinkTextStyle}">
+                                <ContentPresenter Content="{TemplateBinding Content}" />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- General -->
+            <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
+            <Style x:Key="ProjectGroupGrid" TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="MinHeight" Value="100" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <converter:IntegerValueConverter x:Key="GroupColumnsConverter" />
+            <converter:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <Style x:Key="IncreaseButton" TargetType="RepeatButton">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Path
+                            Width="7"
+                            Height="5"
+                            Fill="Black"
+                            Data="M 0,3 C0,3 0,4 0,4 0,4 3,4 3,4 3,4 3,3 3,3 3,3 4,3 4,3 4,3 4,4 4,4 4,4 7,4 7,4 7,4 7,3 7,3 7,3 6,3 6,3 6,3 6,2 6,2 6,2 5,2 5,2 5,2 5,1 5,1 5,1 4,1 4,1 4,1 4,0 4,0 4,0 3,0 3,0 3,0 3,1 3,1 3,1 2,1 2,1 2,1 2,2 2,2 2,2 1,2 1,2 1,2 1,3 1,3 1,3 0,3 0,3 z" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="DecreaseButton" TargetType="RepeatButton">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Path
+                            Width="7"
+                            Height="5"
+                            Fill="Black"
+                            Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- Edit Mode Styles -->
+            <Style x:Key="DiscoverTitleTextBoxStyle" TargetType="TextBox">
+                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.5" />
+            </Style>
+            <DataTemplate x:Key="DropShadowTemplate">
+                <Grid Background="#32000000" />
+            </DataTemplate>
+           
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="Edit Mode"
+                IsCheckable="true"
+                IsChecked="{Binding IsEditMode}" />
+            <MenuItem
+                Header="Export Configuration"
+                Command="{Binding ExportConfigurationCommand}" />
+            <MenuItem
+                Header="Import Configuration"
+                Command="{Binding ImportConfigurationCommand}" />
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Groups Container -->
+        <ScrollViewer Style="{DynamicResource GradientScrollViewerStyle}">
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.Template>
+                    <ControlTemplate>
+                        <view:AutoGrid 
+                            IsItemsHost="True"
+                            Columns="{Binding GroupColumns}" />
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="viewModel:ProjectGroup">
+                        <!-- Single Group -->
+                        <view:GridFileDragAndDropDecorator
+                            HorizontalAlignment="Stretch"
+                            AllowDrop="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            DataTemplate="{StaticResource DropShadowTemplate}"
+                            DefaultDropEffect="Link"
+                            FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            FilesDroppedCommandParameter="{Binding}">
+                            
+                            <Grid HorizontalAlignment="Stretch" Style="{StaticResource ProjectGroupGrid}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Margin="0,15,0,5">
+                                    
+                                    <!-- Normal Display of Group Header -->
+                                    <StackPanel AllowDrop="True" Orientation="Horizontal">
+                                        <TextBlock FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
+                                                   FontStyle="Italic"
+                                                   Text="{Binding Title}" />
+                                        <view:ImageButton
+                                            Margin="5"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.OpenAllFilesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Content="Open all files"
+                                            Visibility="{Binding HasNormalFiles, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <!-- Edit Mode Display of Group Header -->
+                                    <Grid Grid.Row="0" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Style="{StaticResource DiscoverTitleTextBoxStyle}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <view:ImageButton
+                                                Command="{Binding DataContext.DeleteGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Image="pack://application:,,,/BetterStartPage;component/Images/DeleteHS.png"
+                                                ToolTip="Delete" />
+                                            <view:ImageButton
+                                                Command="{Binding DataContext.MoveGroupUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Up_16xLG.png"
+                                                ToolTip="Move Up" />
+                                            <view:ImageButton
+                                                Command="{Binding DataContext.MoveGroupDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Down_16xLG.png"
+                                                ToolTip="Move Down" />
+                                            <view:ImageButton
+                                                Command="{Binding DataContext.AddProjectsToGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Image="pack://application:,,,/BetterStartPage;component/Images/AddAgent_16x.png"
+                                                ToolTip="Add Solutions" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+
+                                <!-- Solution list -->
+                                <ItemsControl
+                                    Name="Projects"
+                                    Grid.Row="1"
+                                    ItemsSource="{Binding Projects}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid 
+                                                IsItemsHost="True"
+                                                Columns="{Binding DataContext.ProjectColumns, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="viewModel:Project">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Normal display of solution item  -->
+                                                <view:ImageButton
+                                                    Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Image="{Binding FullName, Converter={StaticResource PathToSystemIconConverter}}">
+                                                    <view:ImageButton.Content>
+                                                        <TextBlock TextWrapping="NoWrap">
+                                                            <TextBlock Text="{Binding Name}" TextWrapping="NoWrap"
+                                                                       Style="{StaticResource LinkTextStyle}"/>
+                                                            <view:ImageButton
+                                                                Style="{StaticResource DirectoryLinkStyle}"
+                                                                Content="{Binding DirectoryName}"
+                                                                Command="{Binding DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                            />
+                                                        </TextBlock>
+                                                    </view:ImageButton.Content>
+                                                </view:ImageButton>
+
+                                                <StackPanel
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal"
+                                                    Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <view:ImageButton
+                                                        Command="{Binding DataContext.RenameProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Image="pack://application:,,,/BetterStartPage;component/Images/Rename_6779.png"
+                                                        ToolTip="Rename" />
+                                                    <view:ImageButton
+                                                        Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Image="pack://application:,,,/BetterStartPage;component/Images/DeleteHS.png"
+                                                        ToolTip="Delete" />
+                                                    <view:ImageButton
+                                                        Command="{Binding DataContext.MoveProjectUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Up_16xLG.png"
+                                                        ToolTip="Move Up" />
+                                                    <view:ImageButton
+                                                        Command="{Binding DataContext.MoveProjectDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Down_16xLG.png"
+                                                        ToolTip="Move Down" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </Grid>
+                        </view:GridFileDragAndDropDecorator>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Empty Info -->
+        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" Height="100"
+                Background="#F3F4F6">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                No favourites configured. Right click here to enable the edit mode. 
+            </TextBlock>
+        </Border>
+        
+        <StackPanel
+            Grid.Row="2"
+            Margin="5,5,5,30"
+            Orientation="Horizontal"
+            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Label>Group Columns</Label>
+            <Grid Width="50">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    HorizontalContentAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    IsReadOnlyCaretVisible="False"
+                    Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
+                <RepeatButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Style="{StaticResource IncreaseButton}"
+                    Command="{Binding IncreaseGroupColumnsCommand}" />
+                <RepeatButton
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Style="{StaticResource DecreaseButton}"
+                    Command="{Binding DecreaseGroupColumnsCommand}" />
+            </Grid>
+            <Label>Project Columns</Label>
+            <Grid Width="50">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    HorizontalContentAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    IsReadOnlyCaretVisible="False"
+                    Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
+                <RepeatButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Style="{StaticResource IncreaseButton}"
+                    Command="{Binding IncreaseProjectColumnsCommand}" />
+                <RepeatButton
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Style="{StaticResource DecreaseButton}"
+                    Command="{Binding DecreaseProjectColumnsCommand}" />
+            </Grid>
+            <view:ImageButton
+                Margin="5,0,0,0"
+                Command="{Binding AddGroupCommand}"
+                Content="New Group" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>
+
+
+
