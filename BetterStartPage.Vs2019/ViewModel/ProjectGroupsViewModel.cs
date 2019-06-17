@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using BetterStartPage.Control.Settings;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
 using Microsoft.Internal.VisualStudio.PlatformUI;

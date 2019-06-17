@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using BetterStartPage.ViewModel;
 
-namespace BetterStartPage.Settings
+namespace BetterStartPage.Control.Settings
 {
     [DataContract]
     class SettingsExportViewModel
