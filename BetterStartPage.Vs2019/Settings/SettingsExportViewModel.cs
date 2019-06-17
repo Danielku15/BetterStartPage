@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.Serialization;
-using BetterStartPage.ViewModel;
+using BetterStartPage.Control.ViewModel;
 
 namespace BetterStartPage.Control.Settings
 {

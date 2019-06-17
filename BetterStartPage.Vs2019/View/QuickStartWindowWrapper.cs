@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
 using Microsoft.VisualStudio.PlatformUI.GetToCode;
 using Expression = System.Linq.Expressions.Expression;
+using Application = System.Windows.Application;
 
 namespace BetterStartPage.Vs2019
 {
@@ -31,6 +35,36 @@ namespace BetterStartPage.Vs2019
                 dataContextParameter
             ).Compile();
         }
+
+
+        private static readonly Action<Window, double> SetInitialWidth = CompileSetFieldDouble("initialWidth");
+        private static readonly Action<Window, double> SetInitialHeight = CompileSetFieldDouble("initialHeight");
+        private static Action<Window, double> CompileSetFieldDouble(string fieldName)
+        {
+            var backingField = typeof(WorkflowHostView).GetField(fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            if (backingField == null)
+            {
+                return (w, d) => { };
+            }
+
+            var dynamicMethod = new DynamicMethod("SetField_" + fieldName,
+                typeof(void),
+                new[] { typeof(Window), typeof(double) },
+                typeof(WorkflowHostView),
+                true);
+
+            var ilGenerator = dynamicMethod.GetILGenerator();
+
+            // arg0.<field> = arg1
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Ldarg_1);
+            ilGenerator.Emit(OpCodes.Stfld, backingField);
+            ilGenerator.Emit(OpCodes.Ret);
+
+            return (Action<Window, double>)dynamicMethod.CreateDelegate(typeof(Action<Window, double>));
+        }
+
 
         private static readonly PropertyInfo InstanceProperty = QuickStartWindowType.GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic);
         private static readonly EventInfo DialogCreatedEvent = QuickStartWindowType.GetEvent("DialogCreated", BindingFlags.Static | BindingFlags.NonPublic);
@@ -70,6 +104,8 @@ namespace BetterStartPage.Vs2019
         internal void PatchDialog()
         {
             _instance.ResizeMode = ResizeMode.CanResize;
+            _instance.WindowState = WindowState.Normal;
+            _instance.SizeToContent = SizeToContent.Manual;
 
             var settingsProvider = Ioc.Instance.Resolve<ISettingsProvider>();
 
@@ -81,14 +117,10 @@ namespace BetterStartPage.Vs2019
                 }
             };
 
-            _instance.LocationChanged += (sender, args) =>
-            {
-                settingsProvider.WriteDouble("QuickStartWindow.Left", _instance.Left);
-                settingsProvider.WriteDouble("QuickStartWindow.Top", _instance.Top);
-            };
-
             _instance.SizeChanged += (sender, args) =>
             {
+                SetInitialWidth(_instance, args.NewSize.Width);
+                SetInitialHeight(_instance, args.NewSize.Height);
                 settingsProvider.WriteDouble("QuickStartWindow.Width", args.NewSize.Width);
                 settingsProvider.WriteDouble("QuickStartWindow.Height", args.NewSize.Height);
             };
@@ -105,17 +137,18 @@ namespace BetterStartPage.Vs2019
                 _instance.Height = h;
             }
 
-            var l = settingsProvider.ReadDouble("QuickStartWindow.Left");
-            if (!double.IsNaN(l))
+            var mainWindow = Application.Current?.MainWindow;
+            if (mainWindow != null)
             {
-                _instance.Left = l;
+                _instance.Left = mainWindow.Left + (mainWindow.ActualWidth - _instance.Width) / 2;
+                _instance.Top = mainWindow.Top + (mainWindow.ActualHeight - _instance.Height) / 2;
+            }
+            else
+            {
+                _instance.Left = Screen.PrimaryScreen.WorkingArea.Left + (Screen.PrimaryScreen.WorkingArea.Width - _instance.Width) / 2;
+                _instance.Top = Screen.PrimaryScreen.WorkingArea.Top + (Screen.PrimaryScreen.WorkingArea.Height - _instance.Height) / 2;
             }
 
-            var t = settingsProvider.ReadDouble("QuickStartWindow.Top");
-            if (!double.IsNaN(t))
-            {
-                _instance.Top = t;
-            }
 
             if (LogicalTreeHelper.FindLogicalNode(_instance, "ProjectMruGrid") is Grid projectMruGrid
                 && projectMruGrid.Parent is Grid parentGrid)
@@ -130,7 +163,7 @@ namespace BetterStartPage.Vs2019
                 splitter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 splitter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(10, GridUnitType.Pixel) });
                 splitter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                
+
                 var projectFavouriteGrid = new Grid();
                 projectFavouriteGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 projectFavouriteGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -148,7 +181,7 @@ namespace BetterStartPage.Vs2019
                 var groupsControl = new ProjectGroupsControl();
                 Grid.SetRow(groupsControl, 1);
                 projectFavouriteGrid.Children.Add(groupsControl);
-                
+
 
                 parentGrid.Children.Remove(projectMruGrid);
                 Grid.SetRow(projectMruGrid, 0);

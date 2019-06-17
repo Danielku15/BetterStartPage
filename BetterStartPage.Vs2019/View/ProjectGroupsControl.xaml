@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="clr-namespace:BetterStartPage.ViewModel"
+    xmlns:viewModel="clr-namespace:BetterStartPage.Control.ViewModel"
     xmlns:converter="clr-namespace:BetterStartPage.Converter"
     xmlns:betterStartPage="clr-namespace:BetterStartPage"
     xmlns:view="clr-namespace:BetterStartPage.View"
@@ -31,7 +31,7 @@
                 </Style.Triggers>
             </Style>
             <Style TargetType="{x:Type view:ImageButton}">
-                <Setter Property="Margin" Value="5" />
+                <Setter Property="Margin" Value="2" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
@@ -62,7 +62,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <!-- Directory link -->
             <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.DirectoryLinkStyleKey}}" />
@@ -92,7 +92,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <!-- General -->
             <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
             <Style x:Key="ProjectGroupGrid" TargetType="Grid">
@@ -126,7 +126,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <!-- Edit Mode Styles -->
             <Style x:Key="DiscoverTitleTextBoxStyle" TargetType="TextBox">
                 <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.5" />
@@ -134,7 +134,7 @@
             <DataTemplate x:Key="DropShadowTemplate">
                 <Grid Background="#32000000" />
             </DataTemplate>
-           
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -152,7 +152,7 @@
                 Command="{Binding ImportConfigurationCommand}" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -160,7 +160,7 @@
         </Grid.RowDefinitions>
 
         <!-- Groups Container -->
-        <ScrollViewer Style="{DynamicResource GradientScrollViewerStyle}">
+        <ScrollViewer Style="{DynamicResource NonGradientScrollViewerStyle}">
             <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.Template>
                     <ControlTemplate>
@@ -169,7 +169,7 @@
                             Columns="{Binding GroupColumns}" />
                     </ControlTemplate>
                 </ItemsControl.Template>
-                
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="viewModel:ProjectGroup">
                         <!-- Single Group -->
@@ -180,7 +180,7 @@
                             DefaultDropEffect="Link"
                             FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             FilesDroppedCommandParameter="{Binding}">
-                            
+
                             <Grid HorizontalAlignment="Stretch" Style="{StaticResource ProjectGroupGrid}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -189,7 +189,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid Margin="0,15,0,5">
-                                    
+
                                     <!-- Normal Display of Group Header -->
                                     <StackPanel AllowDrop="True" Orientation="Horizontal">
                                         <TextBlock FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
@@ -317,29 +317,35 @@
         </ScrollViewer>
 
         <!-- Empty Info -->
-        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" Height="100"
-                Background="#F3F4F6">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-                No favourites configured. Right click here to enable the edit mode. 
+        <Border Grid.Row="0" 
+                VerticalAlignment="top"
+                Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}"
+                Height="100"
+                Margin="0,20">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" 
+                       TextWrapping="Wrap">
+                No favourites configured. Right click here to enable the edit mode.
             </TextBlock>
         </Border>
-        
-        <StackPanel
-            Grid.Row="2"
+
+        <ScrollViewer
+            Grid.Row="1"
+            Style="{DynamicResource NonGradientScrollViewerStyle}">
+            <WrapPanel
             Margin="5,5,5,30"
             Orientation="Horizontal"
             Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Label>Group Columns</Label>
-            <Grid Width="50">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="20" />
-                </Grid.ColumnDefinitions>
-                <TextBox
+                <TextBlock>Group Columns</TextBlock>
+                <Grid Width="50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     Grid.Column="0"
@@ -348,28 +354,28 @@
                     IsReadOnly="True"
                     IsReadOnlyCaretVisible="False"
                     Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
-                <RepeatButton
+                    <RepeatButton
                     Grid.Row="0"
                     Grid.Column="1"
                     Style="{StaticResource IncreaseButton}"
                     Command="{Binding IncreaseGroupColumnsCommand}" />
-                <RepeatButton
+                    <RepeatButton
                     Grid.Row="1"
                     Grid.Column="1"
                     Style="{StaticResource DecreaseButton}"
                     Command="{Binding DecreaseGroupColumnsCommand}" />
-            </Grid>
-            <Label>Project Columns</Label>
-            <Grid Width="50">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="20" />
-                </Grid.ColumnDefinitions>
-                <TextBox
+                </Grid>
+                <TextBlock>Project Columns</TextBlock>
+                <Grid Width="50">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     Grid.Column="0"
@@ -378,23 +384,23 @@
                     IsReadOnly="True"
                     IsReadOnlyCaretVisible="False"
                     Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
-                <RepeatButton
+                    <RepeatButton
                     Grid.Row="0"
                     Grid.Column="1"
                     Style="{StaticResource IncreaseButton}"
                     Command="{Binding IncreaseProjectColumnsCommand}" />
-                <RepeatButton
+                    <RepeatButton
                     Grid.Row="1"
                     Grid.Column="1"
                     Style="{StaticResource DecreaseButton}"
                     Command="{Binding DecreaseProjectColumnsCommand}" />
-            </Grid>
-            <view:ImageButton
+                </Grid>
+                <view:ImageButton
                 Margin="5,0,0,0"
                 Command="{Binding AddGroupCommand}"
                 Content="New Group" />
-        </StackPanel>
-
+            </WrapPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
 

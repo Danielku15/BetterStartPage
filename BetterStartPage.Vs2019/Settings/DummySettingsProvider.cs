@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BetterStartPage.ViewModel;
+using BetterStartPage.Control.ViewModel;
 
 namespace BetterStartPage.Settings
 {

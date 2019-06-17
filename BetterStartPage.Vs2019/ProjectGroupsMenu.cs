@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
-using BetterStartPage.ViewModel;
+using BetterStartPage.Control.ViewModel;
 using Microsoft.VisualStudio.Shell;
 
 namespace BetterStartPage

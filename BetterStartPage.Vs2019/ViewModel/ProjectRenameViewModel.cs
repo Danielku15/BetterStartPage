@@ -1,4 +1,4 @@
-﻿namespace BetterStartPage.ViewModel
+﻿namespace BetterStartPage.Control.ViewModel
 {
     internal class ProjectRenameViewModel : ViewModelBase
     {

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using BetterStartPage.Properties;
 
-namespace BetterStartPage.ViewModel
+namespace BetterStartPage.Control.ViewModel
 {
     [DataContract]
     internal class ViewModelBase : INotifyPropertyChanged

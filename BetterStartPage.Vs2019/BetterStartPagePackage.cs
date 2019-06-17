@@ -3,8 +3,9 @@ using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using BetterStartPage.Control.ViewModel;
 using BetterStartPage.Settings;
-using BetterStartPage.ViewModel;
 using BetterStartPage.Vs2019;
 using EnvDTE;
 using EnvDTE80;
@@ -28,7 +29,8 @@ namespace BetterStartPage
 
         private const string GetToCodeCmdSetGuidString = "7c57081e-4f31-4ebf-a96f-4769e1d688ec";
         private const int ShowStartWindowCommand = 288;
-        
+
+
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -67,7 +69,10 @@ namespace BetterStartPage
             {
                 QuickStartWindow.DialogCreated += (s,e) => QuickStartWindow.Instance?.PatchDialog();
                 QuickStartWindow.Instance?.PatchDialog();
-                showStartWindowCommand?.Invoke();
+                if(Application.Current?.MainWindow != null)
+                {
+                    showStartWindowCommand?.Invoke();
+                }
             }
             catch (Exception e)
             {
