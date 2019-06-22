@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using BetterStartPage.Settings;
 using BetterStartPage.ViewModel;
 using BetterStartPage.Vs2019;
@@ -67,7 +68,10 @@ namespace BetterStartPage
             {
                 QuickStartWindow.DialogCreated += (s,e) => QuickStartWindow.Instance?.PatchDialog();
                 QuickStartWindow.Instance?.PatchDialog();
-                showStartWindowCommand?.Invoke();
+                if (Application.Current.MainWindow != null)
+                {
+                    showStartWindowCommand?.Invoke();
+                }
             }
             catch (Exception e)
             {

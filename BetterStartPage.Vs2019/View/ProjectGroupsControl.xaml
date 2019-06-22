@@ -8,151 +8,219 @@
     xmlns:betterStartPage="clr-namespace:BetterStartPage"
     xmlns:view="clr-namespace:BetterStartPage.View"
     xmlns:shell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+    xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
     x:Class="BetterStartPage.View.ProjectGroupsControl"
     d:DataContext="{d:DesignInstance viewModel:ProjectGroupsViewModel}"
+    Name="BetterStartPageRoot"
     d:DesignHeight="400"
     d:DesignWidth="400"
     Background="Transparent"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- Link Buttons -->
-            <Style x:Key="LinkTextStyle" TargetType="TextBlock">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkStyleKey}}" />
-                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.1" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
-                    </Trigger>
-                    <Trigger Property="IsFocused" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="{x:Type view:ImageButton}">
-                <Setter Property="Margin" Value="5" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type view:ImageButton}">
-                            <Grid VerticalAlignment="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Border
-                                    x:Name="PART_Border"
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center">
-                                    <Image x:Name="PART_Image" Width="16" Height="16" Source="{TemplateBinding Image}" Stretch="None" SnapsToDevicePixels="True" />
-                                </Border>
-                                <TextBlock
-                                    x:Name="PART_Text"
-                                    Grid.Column="1"
-                                    Margin="8,0,0,0"
-                                    Style="{StaticResource LinkTextStyle}"
-                                    TextWrapping="NoWrap">
-                                    <ContentPresenter Content="{TemplateBinding Content}" />
-                                </TextBlock>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            
-            <!-- Directory link -->
-            <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static betterStartPage:VsResources.DirectoryLinkStyleKey}}" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="0.9" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="TextDecorations" Value="Underline" />
-                    </Trigger>
-                    <Trigger Property="IsFocused" Value="True">
-                        <Setter Property="TextDecorations" Value="Underline" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style x:Key="DirectoryLinkStyle" BasedOn="{StaticResource {x:Type view:ImageButton}}" TargetType="view:ImageButton">
-                <Setter Property="Margin" Value="8,0,0,0" />
-                <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type view:ImageButton}">
-                            <TextBlock
-                                x:Name="PART_Text"
-                                Style="{StaticResource DirectoryLinkTextStyle}">
-                                <ContentPresenter Content="{TemplateBinding Content}" />
-                            </TextBlock>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            
-            <!-- General -->
-            <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
-            <Style x:Key="ProjectGroupGrid" TargetType="Grid">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
-                        <Setter Property="MinHeight" Value="100" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-            <converter:IntegerValueConverter x:Key="GroupColumnsConverter" />
-            <converter:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <Style x:Key="IncreaseButton" TargetType="RepeatButton">
-                <Setter Property="Content">
-                    <Setter.Value>
-                        <Path
-                            Width="7"
-                            Height="5"
-                            Fill="Black"
-                            Data="M 0,3 C0,3 0,4 0,4 0,4 3,4 3,4 3,4 3,3 3,3 3,3 4,3 4,3 4,3 4,4 4,4 4,4 7,4 7,4 7,4 7,3 7,3 7,3 6,3 6,3 6,3 6,2 6,2 6,2 5,2 5,2 5,2 5,1 5,1 5,1 4,1 4,1 4,1 4,0 4,0 4,0 3,0 3,0 3,0 3,1 3,1 3,1 2,1 2,1 2,1 2,2 2,2 2,2 1,2 1,2 1,2 1,3 1,3 1,3 0,3 0,3 z" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style x:Key="DecreaseButton" TargetType="RepeatButton">
-                <Setter Property="Content">
-                    <Setter.Value>
-                        <Path
-                            Width="7"
-                            Height="5"
-                            Fill="Black"
-                            Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            
-            <!-- Edit Mode Styles -->
-            <Style x:Key="DiscoverTitleTextBoxStyle" TargetType="TextBox">
-                <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.5" />
-            </Style>
-            <DataTemplate x:Key="DropShadowTemplate">
-                <Grid Background="#32000000" />
-            </DataTemplate>
-           
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+            Source="/Microsoft.VisualStudio.Shell.15.0;component/UI/Styles/startpageresources.xaml" />
+                <ResourceDictionary>
+                    <converter:ContentToVisibilityConverter x:Key="ContentToVisibilityConverter" />
+
+                    <Geometry x:Key="DeleteIcon">M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z</Geometry>
+                    <Geometry x:Key="RenameIcon">M17,7H22V17H17V19A1,1 0 0,0 18,20H20V22H17.5C16.95,22 16,21.55 16,21C16,21.55 15.05,22 14.5,22H12V20H14A1,1 0 0,0 15,19V5A1,1 0 0,0 14,4H12V2H14.5C15.05,2 16,2.45 16,3C16,2.45 16.95,2 17.5,2H20V4H18A1,1 0 0,0 17,5V7M2,7H13V9H4V15H13V17H2V7M20,15V9H17V15H20Z</Geometry>
+                    <Geometry x:Key="MoveUpIcon">M12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22M12,7L7,12H10V16H14V12H17L12,7Z</Geometry>
+                    <Geometry x:Key="MoveDownIcon">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,17L17,12H14V8H10V12H7L12,17Z</Geometry>
+                    <Geometry x:Key="AddProjectIcon">M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z</Geometry>
+                    <Geometry x:Key="DotsIcon">M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z</Geometry>
+
+                    <!-- Link Buttons -->
+                    <Style x:Key="LinkTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground"
+                    Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkStyleKey}}" />
+                        <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.1" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground"
+                        Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Foreground"
+                        Value="{DynamicResource {x:Static betterStartPage:VsResources.LinkHoverStyleKey}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="ActionButton" TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonBackgroundBrushKey}}" />
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonTextBrushKey}}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonStrokeBrushKey}}" />
+                        <Setter Property="Margin" Value="2" />
+                        <Setter Property="Padding" Value="3" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"
+                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ListItemMouseOverBrushKey}}" />
+                                <Setter Property="Foreground"
+                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ListItemMouseOverTextBrushKey}}" />
+                                <Setter Property="BorderBrush"
+                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonStrokeHoverBrushKey}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="IconButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ActionButton}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border  SnapsToDevicePixels="true"
+                           Background="{TemplateBinding Control.Background}"
+                           BorderBrush="{TemplateBinding Control.BorderBrush}"
+                           Padding="{TemplateBinding Padding}"
+                           BorderThickness="1">
+                                        <Viewbox Width="16" Height="16">
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </Viewbox>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="Path">
+                        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}"></Setter>
+                    </Style>
+
+                    <Style x:Key="LinkButton" TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock
+                      x:Name="PART_Text"
+                      Margin="8,0,0,0"
+                      Style="{StaticResource LinkTextStyle}"
+                      Visibility="{TemplateBinding Content, Converter={StaticResource ContentToVisibilityConverter}}"
+                      TextWrapping="NoWrap">
+                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Directory link -->
+                    <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="0.9" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="DirectoryLink" TargetType="Button">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                        <Setter Property="Foreground"
+                    Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemTextBrushKey}}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <TextBlock
+                      x:Name="PART_Text"
+                      Style="{StaticResource DirectoryLinkTextStyle}">
+                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="ProjectItemStyle" TargetType="Button" BasedOn="{StaticResource StartPageMRUItemStyleKey}">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="FrameworkElement.Cursor" Value="Hand" />
+                                <Setter Property="Control.Background"
+                              Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemHoverBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="ButtonBase.IsPressed" Value="True">
+                                <Setter Property="TextBlock.Foreground"
+                              Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Button.Foreground"
+                              Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Control.Foreground"
+                              Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Control.Background"
+                              Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedBrushKey}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <!-- General -->
+                    <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
+                    <Style x:Key="ProjectGroupGrid" TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger
+                  Binding="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  Value="True">
+                                <Setter Property="MinHeight" Value="100" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                    <converter:IntegerValueConverter x:Key="GroupColumnsConverter" />
+                    <converter:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+                    <Style x:Key="IncreaseButton" TargetType="RepeatButton">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <Path
+                    Width="7"
+                    Height="5"
+                    Fill="Black"
+                    Data="M 0,3 C0,3 0,4 0,4 0,4 3,4 3,4 3,4 3,3 3,3 3,3 4,3 4,3 4,3 4,4 4,4 4,4 7,4 7,4 7,4 7,3 7,3 7,3 6,3 6,3 6,3 6,2 6,2 6,2 5,2 5,2 5,2 5,1 5,1 5,1 4,1 4,1 4,1 4,0 4,0 4,0 3,0 3,0 3,0 3,1 3,1 3,1 2,1 2,1 2,1 2,2 2,2 2,2 1,2 1,2 1,2 1,3 1,3 1,3 0,3 0,3 z" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style x:Key="DecreaseButton" TargetType="RepeatButton">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <Path
+                    Width="7"
+                    Height="5"
+                    Fill="Black"
+                    Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Edit Mode Styles -->
+                    <DataTemplate x:Key="DropShadowTemplate">
+                        <Grid Background="#32000000" />
+                    </DataTemplate>
+
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Header="Edit Mode"
-                IsCheckable="true"
-                IsChecked="{Binding IsEditMode}" />
+          Header="Edit Mode"
+          IsCheckable="true"
+          IsChecked="{Binding IsEditMode}" />
             <MenuItem
-                Header="Export Configuration"
-                Command="{Binding ExportConfigurationCommand}" />
+          Header="Export Configuration"
+          Command="{Binding ExportConfigurationCommand}" />
             <MenuItem
-                Header="Import Configuration"
-                Command="{Binding ImportConfigurationCommand}" />
+          Header="Import Configuration"
+          Command="{Binding ImportConfigurationCommand}" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -164,23 +232,23 @@
             <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.Template>
                     <ControlTemplate>
-                        <view:AutoGrid 
-                            IsItemsHost="True"
-                            Columns="{Binding GroupColumns}" />
+                        <view:AutoGrid
+                IsItemsHost="True"
+                Columns="{Binding GroupColumns}" />
                     </ControlTemplate>
                 </ItemsControl.Template>
-                
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="viewModel:ProjectGroup">
                         <!-- Single Group -->
                         <view:GridFileDragAndDropDecorator
-                            HorizontalAlignment="Stretch"
-                            AllowDrop="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            DataTemplate="{StaticResource DropShadowTemplate}"
-                            DefaultDropEffect="Link"
-                            FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            FilesDroppedCommandParameter="{Binding}">
-                            
+                HorizontalAlignment="Stretch"
+                AllowDrop="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                DataTemplate="{StaticResource DropShadowTemplate}"
+                DefaultDropEffect="Link"
+                FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                FilesDroppedCommandParameter="{Binding}">
+
                             <Grid HorizontalAlignment="Stretch" Style="{StaticResource ProjectGroupGrid}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -188,67 +256,129 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <Grid Margin="0,15,0,5">
-                                    
-                                    <!-- Normal Display of Group Header -->
-                                    <StackPanel AllowDrop="True" Orientation="Horizontal">
-                                        <TextBlock FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
-                                                   FontStyle="Italic"
-                                                   Text="{Binding Title}" />
-                                        <view:ImageButton
-                                            Margin="5"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding DataContext.OpenAllFilesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"
-                                            Content="Open all files"
-                                            Visibility="{Binding HasNormalFiles, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    </StackPanel>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                                    <!-- Edit Mode Display of Group Header -->
-                                    <Grid Grid.Row="0" Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox Style="{StaticResource DiscoverTitleTextBoxStyle}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
-                                        <StackPanel
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal">
-                                            <view:ImageButton
-                                                Command="{Binding DataContext.DeleteGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Image="pack://application:,,,/BetterStartPage;component/Images/DeleteHS.png"
-                                                ToolTip="Delete" />
-                                            <view:ImageButton
-                                                Command="{Binding DataContext.MoveGroupUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Up_16xLG.png"
-                                                ToolTip="Move Up" />
-                                            <view:ImageButton
-                                                Command="{Binding DataContext.MoveGroupDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Down_16xLG.png"
-                                                ToolTip="Move Down" />
-                                            <view:ImageButton
-                                                Command="{Binding DataContext.AddProjectsToGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Image="pack://application:,,,/BetterStartPage;component/Images/AddAgent_16x.png"
-                                                ToolTip="Add Solutions" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Grid>
+                                <TextBlock
+                                    Grid.Row="0" 
+                                    Grid.Column="0"
+                                    FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
+                                    FontStyle="Italic"
+                                    Text="{Binding Title}" />
+
+                                <Button 
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Style="{StaticResource LinkButton}"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.OpenAllFilesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Content="Open all files"
+                                        Margin="5"
+                                        Visibility="{Binding HasNormalFiles, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <Button 
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Style="{StaticResource IconButton}" 
+                                    ToolTip="Show Options"
+                                    view:DropDownButtonMenu.IsEnabled="true">
+                                    <Button.ContextMenu>
+                                        <ContextMenu x:Name="MainContextMenu" PlacementRectangle="{Binding RelativeSource={RelativeSource Self}}">
+                                            <ContextMenu.Resources>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=MenuItem}, Path=Foreground}"></Setter>
+                                                </Style>
+                                            </ContextMenu.Resources>
+
+                                            <MenuItem Header="{Binding Title}" IsEnabled="False" />
+
+                                            <Separator />
+
+                                            <MenuItem Header="Add projects to group"
+                                                        Command="{Binding DataContext.AddProjectsToGroupCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                                        CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource AddProjectIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <MenuItem Header="Rename group"
+                                    Command="{Binding DataContext.RenameGroupCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                    CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource RenameIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <MenuItem Header="Remove group"
+                                  Command="{Binding DataContext.DeleteGroupCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                  CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource DeleteIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <Separator />
+
+                                            <MenuItem Header="Move group up"
+                                Command="{Binding DataContext.MoveGroupUpCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource MoveUpIcon}"  />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+
+                                            <MenuItem Header="Move group down"
+                                  Command="{Binding DataContext.MoveGroupDownCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                  CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource MoveDownIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                    <Canvas Width="24" Height="24">
+                                        <Path Data="{StaticResource DotsIcon}" />
+                                    </Canvas>
+                                </Button>
 
                                 <!-- Solution list -->
                                 <ItemsControl
                                     Name="Projects"
                                     Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
                                     ItemsSource="{Binding Projects}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <UniformGrid 
-                                                IsItemsHost="True"
-                                                Columns="{Binding DataContext.ProjectColumns, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                            <UniformGrid
+                          IsItemsHost="True"
+                          Columns="{Binding DataContext.ProjectColumns, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
@@ -260,50 +390,123 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <!-- Normal display of solution item  -->
-                                                <view:ImageButton
-                                                    Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}"
-                                                    Image="{Binding FullName, Converter={StaticResource PathToSystemIconConverter}}">
-                                                    <view:ImageButton.Content>
-                                                        <TextBlock TextWrapping="NoWrap">
-                                                            <TextBlock Text="{Binding Name}" TextWrapping="NoWrap"
-                                                                       Style="{StaticResource LinkTextStyle}"/>
-                                                            <view:ImageButton
-                                                                Style="{StaticResource DirectoryLinkStyle}"
-                                                                Content="{Binding DirectoryName}"
-                                                                Command="{Binding DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                CommandParameter="{Binding}"
-                                                            />
-                                                        </TextBlock>
-                                                    </view:ImageButton.Content>
-                                                </view:ImageButton>
+                                                <Button Style="{StaticResource ProjectItemStyle}"
+                                Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}">
 
-                                                <StackPanel
-                                                    Grid.Column="1"
-                                                    VerticalAlignment="Center"
-                                                    Orientation="Horizontal"
-                                                    Visibility="{Binding DataContext.IsEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                    <view:ImageButton
-                                                        Command="{Binding DataContext.RenameProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Image="pack://application:,,,/BetterStartPage;component/Images/Rename_6779.png"
-                                                        ToolTip="Rename" />
-                                                    <view:ImageButton
-                                                        Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Image="pack://application:,,,/BetterStartPage;component/Images/DeleteHS.png"
-                                                        ToolTip="Delete" />
-                                                    <view:ImageButton
-                                                        Command="{Binding DataContext.MoveProjectUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Up_16xLG.png"
-                                                        ToolTip="Move Up" />
-                                                    <view:ImageButton
-                                                        Command="{Binding DataContext.MoveProjectDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Image="pack://application:,,,/BetterStartPage;component/Images/arrow_Down_16xLG.png"
-                                                        ToolTip="Move Down" />
-                                                </StackPanel>
+                                                    <Button.ContextMenu>
+                                                        <ContextMenu>
+                                                            <ContextMenu.Resources>
+                                                                
+                                                            </ContextMenu.Resources>
+
+                                                            <MenuItem Header="{Binding Name}"
+                                      IsEnabled="False" />
+
+                                                            <Separator />
+
+                                                            <MenuItem Header="Rename project"
+                                        Command="{Binding DataContext.RenameProjectCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                        CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource RenameIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                            <MenuItem Header="Remove project"
+                                      Command="{Binding DataContext.DeleteProjectCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource DeleteIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                            <Separator />
+
+                                                            <MenuItem Header="Move project up"
+                                    Command="{Binding DataContext.MoveProjectUpCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                    CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource MoveUpIcon}"  />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+
+                                                            <MenuItem Header="Move project down"
+                                      Command="{Binding DataContext.MoveProjectDownCommand, Source={x:Reference Name=BetterStartPageRoot}}"
+                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource MoveDownIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                        </ContextMenu>
+                                                    </Button.ContextMenu>
+
+                                                    <Grid Margin="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="8" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <Image
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Source="{Binding FullName, Converter={StaticResource PathToSystemIconConverter}}"
+                                Height="24"
+                                Width="24"
+                                Grid.RowSpan="2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                SnapsToDevicePixels="True" />
+
+
+                                                        <TextBlock Grid.Column="2"
+                                       Grid.Row="0"
+                                       Text="{Binding Name}"
+                                       ToolTip="{Binding Name}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"
+                                       Style="{DynamicResource {x:Static shell:VsResourceKeys.TextBlockEnvironment111PercentFontSizeStyleKey}}" />
+
+
+                                                        <Button
+                                Grid.Column="2"
+                                Grid.Row="1"
+                                Style="{StaticResource DirectoryLink}"
+                                ToolTip="{Binding DirectoryName}"
+                                Command="{Binding DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}">
+                                                            <TextBlock Text="{Binding DirectoryName}"
+                                         TextWrapping="NoWrap"
+                                         TextTrimming="CharacterEllipsis" />
+                                                        </Button>
+
+                                                    </Grid>
+                                                </Button>
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -317,18 +520,26 @@
         </ScrollViewer>
 
         <!-- Empty Info -->
-        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" Height="100"
-                Background="#F3F4F6">
+        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}"
+            Height="100"
+            Background="#F3F4F6">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-                No favourites configured. Right click here to enable the edit mode. 
+        No favourites configured. Right click here to enable the edit mode.
             </TextBlock>
         </Border>
-        
+
         <StackPanel
-            Grid.Row="2"
-            Margin="5,5,5,30"
-            Orientation="Horizontal"
-            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+        Grid.Row="1"
+        Margin="5,5,5,30"
+        Orientation="Horizontal"
+        Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Button Style="{StaticResource ActionButton}"
+          Margin="0,0,0,5"
+          Command="{Binding AddGroupCommand}"
+          Content="Add Group" 
+           />
+
             <Label>Group Columns</Label>
             <Grid Width="50">
                 <Grid.RowDefinitions>
@@ -340,24 +551,24 @@
                     <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
                 <TextBox
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    HorizontalContentAlignment="Right"
-                    VerticalContentAlignment="Center"
-                    IsReadOnly="True"
-                    IsReadOnlyCaretVisible="False"
-                    Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            HorizontalContentAlignment="Right"
+            VerticalContentAlignment="Center"
+            IsReadOnly="True"
+            IsReadOnlyCaretVisible="False"
+            Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
                 <RepeatButton
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Style="{StaticResource IncreaseButton}"
-                    Command="{Binding IncreaseGroupColumnsCommand}" />
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource IncreaseButton}"
+            Command="{Binding IncreaseGroupColumnsCommand}" />
                 <RepeatButton
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Style="{StaticResource DecreaseButton}"
-                    Command="{Binding DecreaseGroupColumnsCommand}" />
+            Grid.Row="1"
+            Grid.Column="1"
+            Style="{StaticResource DecreaseButton}"
+            Command="{Binding DecreaseGroupColumnsCommand}" />
             </Grid>
             <Label>Project Columns</Label>
             <Grid Width="50">
@@ -370,33 +581,26 @@
                     <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
                 <TextBox
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    HorizontalContentAlignment="Right"
-                    VerticalContentAlignment="Center"
-                    IsReadOnly="True"
-                    IsReadOnlyCaretVisible="False"
-                    Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            HorizontalContentAlignment="Right"
+            VerticalContentAlignment="Center"
+            IsReadOnly="True"
+            IsReadOnlyCaretVisible="False"
+            Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
                 <RepeatButton
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Style="{StaticResource IncreaseButton}"
-                    Command="{Binding IncreaseProjectColumnsCommand}" />
+            Grid.Row="0"
+            Grid.Column="1"
+            Style="{StaticResource IncreaseButton}"
+            Command="{Binding IncreaseProjectColumnsCommand}" />
                 <RepeatButton
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Style="{StaticResource DecreaseButton}"
-                    Command="{Binding DecreaseProjectColumnsCommand}" />
+            Grid.Row="1"
+            Grid.Column="1"
+            Style="{StaticResource DecreaseButton}"
+            Command="{Binding DecreaseProjectColumnsCommand}" />
             </Grid>
-            <view:ImageButton
-                Margin="5,0,0,0"
-                Command="{Binding AddGroupCommand}"
-                Content="New Group" />
         </StackPanel>
 
     </Grid>
 </UserControl>
-
-
-

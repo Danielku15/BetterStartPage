@@ -52,10 +52,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converter\ContentToVisibilityConverter.cs" />
     <Compile Include="Converter\IntegerValueConverter.cs" />
     <Compile Include="Converter\PathToSystemIconConverter.cs" />
     <Compile Include="IIdeAccess.cs" />
     <Compile Include="Ioc.cs" />
+    <Compile Include="View\DropDownButtonMenu.cs" />
     <Compile Include="View\ProjectGroupsControl.xaml.cs">
       <DependentUpon>ProjectGroupsControl.xaml</DependentUpon>
     </Compile>
@@ -133,24 +135,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AddAgent_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\arrow_Down_16xLG.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\arrow_Up_16xLG.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\delete_16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DeleteHS.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Rename_6779.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt">

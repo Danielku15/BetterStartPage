@@ -66,7 +66,7 @@ namespace BetterStartPage.Converter
                 {
                     flags = flags | SHGFI_USEFILEATTRIBUTES;
                 }
-                flags = flags | SHGFI_ICON | SHGFI_SMALLICON;
+                flags = flags | SHGFI_ICON;
 
                 var hr = SHGetFileInfo(fileName, 0, ref shinfo, (uint) Marshal.SizeOf(shinfo), flags);
                 if (hr != IntPtr.Zero)

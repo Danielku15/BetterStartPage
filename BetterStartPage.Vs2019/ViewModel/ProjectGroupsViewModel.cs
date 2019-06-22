@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
+using BetterStartPage.Vs2019;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.Win32;
 
@@ -206,9 +207,15 @@ namespace BetterStartPage.ViewModel
 
         private void OpenAllFiles(ProjectGroup group)
         {
-            foreach (var project in group.Projects.Where(p => p.IsNormalFile))
+            if (QuickStartWindow.Instance != null)
             {
-                OpenProject(project);
+                QuickStartWindow.Instance.CompleteWorkflow(() =>
+                {
+                    foreach (var project in group.Projects.Where(p => p.IsNormalFile))
+                    {
+                        OpenProject(project);
+                    }
+                });
             }
         }
 
