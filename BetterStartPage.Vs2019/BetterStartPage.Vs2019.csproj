@@ -91,6 +91,10 @@
     <Compile Include="VsIdeAccess.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="startpagepreview.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <VSCTCompile Include="BetterStartPagePackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>

@@ -62,8 +62,7 @@ namespace BetterStartPage
 
         private object CreateInstance(Type interfaceType)
         {
-            Type implementationType;
-            if (!_registrations.TryGetValue(interfaceType, out implementationType))
+            if (!_registrations.TryGetValue(interfaceType, out var implementationType))
             {
                 throw new InvalidOperationException($"No implementation for type {interfaceType.FullName} registered");
             }

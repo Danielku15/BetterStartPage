@@ -2,11 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converter="clr-namespace:BetterStartPage.Converter"
         x:Class="BetterStartPage.View.SettingsWindow"
-        Title="BetterStartPage - Settings" 
+        Title="BetterStartPage - Settings"
         Width="400"
-        SizeToContent="Height" 
+        SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="ToolWindow" 
+        WindowStyle="ToolWindow"
         ResizeMode="NoResize">
     <Window.Resources>
         <converter:IntegerValueConverter x:Key="GroupColumnsConverter" />
@@ -48,7 +48,9 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0"
-               Grid.Column="0">Group Columns</Label>
+               Grid.Column="0">
+            Group Columns
+        </Label>
         <Grid Width="50"
               Grid.Row="0"
               Grid.Column="1"
@@ -62,24 +64,24 @@
                 <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
             <TextBox
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="0"
-            HorizontalContentAlignment="Right"
-            VerticalContentAlignment="Center"
-            IsReadOnly="True"
-            IsReadOnlyCaretVisible="False"
-            Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                HorizontalContentAlignment="Right"
+                VerticalContentAlignment="Center"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="False"
+                Text="{Binding GroupColumns, Converter={StaticResource GroupColumnsConverter}}" />
             <RepeatButton
-            Grid.Row="0"
-            Grid.Column="1"
-            Style="{StaticResource IncreaseButton}"
-            Command="{Binding IncreaseGroupColumnsCommand}" />
+                Grid.Row="0"
+                Grid.Column="1"
+                Style="{StaticResource IncreaseButton}"
+                Command="{Binding IncreaseGroupColumnsCommand}" />
             <RepeatButton
-            Grid.Row="1"
-            Grid.Column="1"
-            Style="{StaticResource DecreaseButton}"
-            Command="{Binding DecreaseGroupColumnsCommand}" />
+                Grid.Row="1"
+                Grid.Column="1"
+                Style="{StaticResource DecreaseButton}"
+                Command="{Binding DecreaseGroupColumnsCommand}" />
         </Grid>
 
         <Label Grid.Row="1" Grid.Column="0">Project Columns</Label>
@@ -95,24 +97,24 @@
                 <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
             <TextBox
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="0"
-            HorizontalContentAlignment="Right"
-            VerticalContentAlignment="Center"
-            IsReadOnly="True"
-            IsReadOnlyCaretVisible="False"
-            Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                HorizontalContentAlignment="Right"
+                VerticalContentAlignment="Center"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="False"
+                Text="{Binding ProjectColumns, Converter={StaticResource GroupColumnsConverter}}" />
             <RepeatButton
-            Grid.Row="0"
-            Grid.Column="1"
-            Style="{StaticResource IncreaseButton}"
-            Command="{Binding IncreaseProjectColumnsCommand}" />
+                Grid.Row="0"
+                Grid.Column="1"
+                Style="{StaticResource IncreaseButton}"
+                Command="{Binding IncreaseProjectColumnsCommand}" />
             <RepeatButton
-            Grid.Row="1"
-            Grid.Column="1"
-            Style="{StaticResource DecreaseButton}"
-            Command="{Binding DecreaseProjectColumnsCommand}" />
+                Grid.Row="1"
+                Grid.Column="1"
+                Style="{StaticResource DecreaseButton}"
+                Command="{Binding DecreaseProjectColumnsCommand}" />
         </Grid>
 
     </Grid>

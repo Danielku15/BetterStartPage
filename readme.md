@@ -1,35 +1,32 @@
-# BetterStartPage
+# BetterStartPage (Visual Studio 2019+)
 
-This is a Visual Studio like start page which replaces the news section by a custom project dashboard.
+This extension adds an additional "custom dashboard"-section to the Visual Studio Quick Start Window.
 In the project dashboard you can organize your solutions and projects into different groups for fast access. 
 
-To edit the dashboard right-click on the empty area and enable the edit mode in the context menu. 
-Add new groups by clicking on the "Add Group" link on the bottom, add new projects to the group by dragging Solution or Project files from the explorer to the groups. 
-You can reorder or delete groups and projects by using the action buttons beside the items. 
-
-All added items are also accessible via the File > Open Favourite menu item. 
-
 ![Screenshot](https://github.com/Danielku15/BetterStartPage/blob/master/BetterStartPage/startpagepreview.png?raw=1 "Screenshot")
+
+## Features
+
+- Adds a customizable project dashboard to the Visual Studio Quick Start Window
+- Adds a new menu item File > Open Favourite where the pinned projects can quickly be accessed
+- Makes the Visual Studio Quick Start Window resizable 
 
 # Getting Started
 
 ## Installation
 
-- Install the Extension from the [Visual Studio Extension Gallery](https://visualstudiogallery.msdn.microsoft.com/8da4b080-2ad6-47fd-a1ff-4e7cc185523b)
-- Go to Tools->Options->Environment->Startup and select the BetterStartPage as start page. 
+- Install the Extension from the [Visual Studio Extension Gallery](https://marketplace.visualstudio.com/items?itemName=Danielku15.BetterStartPage)
+- Optional: Go to Tools->Options->Environment->Startup and select "Empty Environment" 
 
-## Basic Usage
+## Setup
 
-**Due to some restrictions within Windows, it's not possible to drag&drop items from 
-  a non elevated application (like the normal Windows Explorer) into an elevated one. 
-  Please ensure you start Visual Studio with normal user credentials and not using 
-  'Run as Administrator', otherwise the dragging projects and solutions into 
-  BetterStartPage will not work**
+- Right click on the area of Better Start Page to add new groups
+- Use the menu button beside the group title to add new items or remove, reorder and rename the group
+- Right click on the project items to remove, reorder and rename them
+- Open the settings dialog to adjust the number of columns used for groups and projects
 
-- right click on the empty area and enable the edit mode 
-- add new groups using the "Add Group" link on the bottom
-- edit the group titles using the inline textbox
-- add new solution and project files to the groups using Drag&Drop from Windows Explorer
-- adjust the number of group columns you want to have
-- use the action buttons to reorder or delete items 
-- right click on the empty area and disable the edit mode to save your layout 
+## Usage 
+- Click on any project item to open it
+- Click on the folder name below to open the explorer at the project location
+- When normal files are added to the group, use the "Open all files" link to directly open all files. 
+- Use the File > Open Favourite menu to quickly open any project item

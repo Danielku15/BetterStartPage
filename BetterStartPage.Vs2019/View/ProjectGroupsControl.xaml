@@ -32,7 +32,17 @@
                     <!-- Link Buttons -->
                     <Style x:Key="LinkTextStyle" TargetType="TextBlock">
                         <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static shell:VsBrushes.StartPageTextControlLinkSelectedKey}}" />
                         <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.1" />
+                        <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
 
                     <Style x:Key="ActionButton" TargetType="{x:Type Button}">
@@ -250,6 +260,7 @@
                                     Grid.Column="0"
                                     FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
                                     FontStyle="Italic"
+                                    Margin="0, 5"
                                     Text="{Binding Title}" />
 
                                 <Button
@@ -362,7 +373,7 @@
                                     ItemsSource="{Binding Projects}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <UniformGrid
+                                            <view:AutoGrid
                                                 IsItemsHost="True"
                                                 Columns="{Binding DataContext.ProjectColumns, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                         </ItemsPanelTemplate>

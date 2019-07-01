@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="BetterStartPage.Vs2019.f29bfd85-26ae-4238-aaac-8894388f6a8b" Version="2.0.1" Language="en-US" Publisher="Danielku15" />
+        <Identity Id="BetterStartPage.Vs2019.f29bfd85-26ae-4238-aaac-8894388f6a8b" Version="2.0.2" Language="en-US" Publisher="Danielku15" />
         <DisplayName>BetterStartPage for Visual Studio 2019</DisplayName>
         <Description xml:space="preserve">This plugin extends the Visual Studio 2019 Quick Start Window with a customizable area where solutions can be organized. </Description>
         <MoreInfo>https://github.com/Danielku15/BetterStartPage</MoreInfo>
         <License>License.txt</License>
         <ReleaseNotes>ReleaseNotes.md</ReleaseNotes>
         <Icon>startpage.png</Icon>
+        <PreviewImage>startpagepreview.png</PreviewImage>
         <Tags>productivity, start, page, startpage, start page</Tags>
         <Preview>true</Preview>
     </Metadata>

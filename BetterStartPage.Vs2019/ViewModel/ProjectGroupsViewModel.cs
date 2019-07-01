@@ -42,7 +42,7 @@ namespace BetterStartPage.Control.ViewModel
             set
             {
                 if (value == _projectColumns) return;
-                _projectColumns = Math.Max(0, value);
+                _projectColumns = Math.Max(1, value);
                 ((RelayCommand)DecreaseProjectColumnsCommand).RaiseCanExecuteChanged();
                 OnPropertyChanged();
                 PersistSettings();
@@ -117,7 +117,7 @@ namespace BetterStartPage.Control.ViewModel
             DecreaseGroupColumnsCommand = new RelayCommand(DecreaseGroupColumns, () => GroupColumns > 1);
 
             IncreaseProjectColumnsCommand = new RelayCommand(IncreaseProjectColumns);
-            DecreaseProjectColumnsCommand = new RelayCommand(DecreaseProjectColumns, () => ProjectColumns > 0);
+            DecreaseProjectColumnsCommand = new RelayCommand(DecreaseProjectColumns, () => ProjectColumns > 1);
 
             ExportConfigurationCommand = new RelayCommand(ExportConfiguration);
             ImportConfigurationCommand = new RelayCommand(ImportConfiguration);
