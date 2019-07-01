@@ -8,27 +8,9 @@ namespace BetterStartPage.Settings
 {
     public class VsSettingsProvider : ISettingsProvider
     {
-        private const string SettingsRootPrefix = @"StartPage\Settings\";
+        private const string SettingsRootPrefix = @"StartPage\Settings\BetterStartPage2019";
 
         private readonly WritableSettingsStore _settingsStore;
-        private string _settingsRoot;
-
-        private string SettingsRoot
-        {
-            get
-            {
-                if (_settingsRoot == null)
-                {
-                    var settingsRoot = new StringBuilder(SettingsRootPrefix);
-                    settingsRoot.Append("BetterStartPage");
-                    settingsRoot.Append("1.0");
-
-                    _settingsRoot = settingsRoot.ToString();
-                }
-
-                return _settingsRoot;
-            }
-        }
 
         public VsSettingsProvider(IServiceProvider serviceProvider)
         {
@@ -39,15 +21,15 @@ namespace BetterStartPage.Settings
         public void WriteString(string name, string value)
         {
             if (!EnsureCollection()) return;
-            _settingsStore.SetString(SettingsRoot, name, value);
+            _settingsStore.SetString(SettingsRootPrefix, name, value);
         }
 
         private bool EnsureCollection()
         {
             if (_settingsStore == null) return false;
-            if (!_settingsStore.CollectionExists(SettingsRoot))
+            if (!_settingsStore.CollectionExists(SettingsRootPrefix))
             {
-                _settingsStore.CreateCollection(SettingsRoot);
+                _settingsStore.CreateCollection(SettingsRootPrefix);
             }
             return true;
         }
@@ -55,7 +37,7 @@ namespace BetterStartPage.Settings
         public string ReadString(string name, string defaultValue = "")
         {
             if (_settingsStore == null) return defaultValue;
-            return _settingsStore.GetString(SettingsRoot, name, defaultValue);
+            return _settingsStore.GetString(SettingsRootPrefix, name, defaultValue);
         }
 
         public void WriteBool(string name, bool value)
@@ -75,50 +57,50 @@ namespace BetterStartPage.Settings
 
         public void Reset()
         {
-            _settingsStore.DeleteCollection(SettingsRoot);
+            _settingsStore.DeleteCollection(SettingsRootPrefix);
         }
 
         public void WriteInt32(string name, int value)
         {
             if (!EnsureCollection()) return;
-            _settingsStore.SetInt32(SettingsRoot, name, value);
+            _settingsStore.SetInt32(SettingsRootPrefix, name, value);
         }
 
         public int ReadInt32(string name, int defaultValue = 0)
         {
             if (_settingsStore == null) return defaultValue;
-            return _settingsStore.GetInt32(SettingsRoot, name, defaultValue);
+            return _settingsStore.GetInt32(SettingsRootPrefix, name, defaultValue);
         }
 
         public void WriteDouble(string name, double value)
         {
             if (!EnsureCollection()) return;
-            _settingsStore.SetInt64(SettingsRoot, name, BitConverter.DoubleToInt64Bits(value));
+            _settingsStore.SetInt64(SettingsRootPrefix, name, BitConverter.DoubleToInt64Bits(value));
         }
 
         public double ReadDouble(string name, double defaultValue = Double.NaN)
         {
             if (_settingsStore == null) return defaultValue;
 
-            return BitConverter.Int64BitsToDouble(_settingsStore.GetInt64(SettingsRoot, name, BitConverter.DoubleToInt64Bits(defaultValue)));
+            return BitConverter.Int64BitsToDouble(_settingsStore.GetInt64(SettingsRootPrefix, name, BitConverter.DoubleToInt64Bits(defaultValue)));
         }
 
         public void WriteBytes(string name, byte[] value)
         {
             if (!EnsureCollection()) return;
-            _settingsStore.SetMemoryStream(SettingsRoot, name, new MemoryStream(value));
+            _settingsStore.SetMemoryStream(SettingsRootPrefix, name, new MemoryStream(value));
         }
 
         public byte[] ReadBytes(string name, byte[] defaultValue = null)
         {
             if (_settingsStore == null) return defaultValue;
 
-            if (!_settingsStore.PropertyExists(SettingsRoot, name))
+            if (!_settingsStore.PropertyExists(SettingsRootPrefix, name))
             {
                 return defaultValue;
             }
 
-            return _settingsStore.GetMemoryStream(SettingsRoot, name).ToArray();
+            return _settingsStore.GetMemoryStream(SettingsRootPrefix, name).ToArray();
         }
     }
 }

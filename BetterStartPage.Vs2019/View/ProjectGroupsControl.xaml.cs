@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
+using BetterStartPage.Control.ViewModel;
 using BetterStartPage.Settings;
-using BetterStartPage.ViewModel;
 
 namespace BetterStartPage.View
 {

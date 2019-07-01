@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace BetterStartPage.ViewModel
+namespace BetterStartPage.Control.ViewModel
 {
     internal class RelayCommand : ICommand
     {

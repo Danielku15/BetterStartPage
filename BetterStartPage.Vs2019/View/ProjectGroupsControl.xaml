@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="clr-namespace:BetterStartPage.ViewModel"
+    xmlns:viewModel="clr-namespace:BetterStartPage.Control.ViewModel"
     xmlns:converter="clr-namespace:BetterStartPage.Converter"
     xmlns:betterStartPage="clr-namespace:BetterStartPage"
     xmlns:view="clr-namespace:BetterStartPage.View"
@@ -216,7 +216,7 @@
         </Grid.RowDefinitions>
 
         <!-- Groups Container -->
-        <ScrollViewer Style="{DynamicResource GradientScrollViewerStyle}">
+        <ScrollViewer Style="{DynamicResource NonGradientScrollViewerStyle}">
             <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.Template>
                     <ControlTemplate>
@@ -515,7 +515,7 @@
             Height="100"
             Background="#F3F4F6">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-        No favourites configured. Right click here to enable the edit mode.
+        No favourites configured. Right click here to create your first group.
             </TextBlock>
         </Border>
 

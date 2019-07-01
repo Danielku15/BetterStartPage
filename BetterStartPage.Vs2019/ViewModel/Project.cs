@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace BetterStartPage.ViewModel
+namespace BetterStartPage.Control.ViewModel
 {
     [DataContract]
     internal class Project : ViewModelBase

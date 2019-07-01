@@ -6,13 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using BetterStartPage.Control.Settings;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
 using BetterStartPage.Vs2019;
 using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.Win32;
 
-namespace BetterStartPage.ViewModel
+namespace BetterStartPage.Control.ViewModel
 {
     internal class ProjectGroupsViewModel : ViewModelBase
     {
@@ -442,8 +444,7 @@ namespace BetterStartPage.ViewModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("Loading Start Page settings failed {0}", e);
-                    throw;
+                    ActivityLog.LogError("BetterStartPage", "Loading of Start Page Settings failed: " + e);
                 }
             }
 
@@ -463,7 +464,7 @@ namespace BetterStartPage.ViewModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Loading Start Page settings failed {0}", e);
+                ActivityLog.LogError("BetterStartPage", "Saving of Start Page Settings failed: " + e);
             }
 
             _settingsProvider.WriteInt32("GroupColumns", GroupColumns);
