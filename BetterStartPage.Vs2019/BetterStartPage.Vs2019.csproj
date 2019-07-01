@@ -55,6 +55,8 @@
     <Compile Include="Converter\ContentToVisibilityConverter.cs" />
     <Compile Include="Converter\IntegerValueConverter.cs" />
     <Compile Include="Converter\PathToSystemIconConverter.cs" />
+    <Compile Include="Converter\ProjectDisplayModeToIconSizeConverter.cs" />
+    <Compile Include="Converter\ProjectDisplayModeToStyleConverter.cs" />
     <Compile Include="IIdeAccess.cs" />
     <Compile Include="Ioc.cs" />
     <Compile Include="View\DropDownButtonMenuBehavior.cs" />

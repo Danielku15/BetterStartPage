@@ -13,40 +13,50 @@ using Microsoft.VisualStudio.Shell;
 
 namespace BetterStartPage.Converter
 {
-    internal class PathToSystemIconConverter : IValueConverter
+    internal class PathToSystemIconConverter : IMultiValueConverter
     {
-        private readonly Dictionary<string, ImageSource> _imageCache;
-
+        private readonly Dictionary<string, ImageSource> _smallImageCache;
+        private readonly Dictionary<string, ImageSource> _largeImageCache;
+        
         public PathToSystemIconConverter()
         {
-            _imageCache = new Dictionary<string, ImageSource>();
+            _smallImageCache = new Dictionary<string, ImageSource>();
+            _largeImageCache = new Dictionary<string, ImageSource>();
         }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var fileName = value as string;
+            if (values.Length != 2) return null;
+
+            var fileName = values[0] as string;
             if (fileName == null) return null;
 
-            return ConvertFromCache(fileName);
+            var smallIcon = values[1] is bool b && b;
+
+            return ConvertFromCache(fileName, smallIcon);
         }
 
-        private object ConvertFromCache(string fileName)
+        private object ConvertFromCache(string fileName, bool smallIcon)
         {
             if (Utilities.IsHttp(fileName))
             {
                 fileName = "test.url";
             }
 
+            var cache = smallIcon ? _smallImageCache : _largeImageCache;
+
             var extension = Path.GetExtension(fileName);
-            if (!_imageCache.ContainsKey(extension))
+
+            if (!cache.TryGetValue(extension, out var image))
             {
-                _imageCache[extension] = GetFileIcon(fileName);
+                image = GetFileIcon(fileName, smallIcon);
+                cache[extension] = image;
             }
 
-            return _imageCache[extension];
+            return image;
         }
 
-        private ImageSource GetFileIcon(string fileName)
+        private ImageSource GetFileIcon(string fileName, bool smallIcon)
         {
             // if file does not exist, create a temp file with the same file extension
             var isTemp = false;
@@ -67,6 +77,10 @@ namespace BetterStartPage.Converter
                     flags = flags | SHGFI_USEFILEATTRIBUTES;
                 }
                 flags = flags | SHGFI_ICON;
+                if (smallIcon)
+                {
+                    flags |= SHGFI_SMALLICON;
+                }
 
                 var hr = SHGetFileInfo(fileName, 0, ref shinfo, (uint) Marshal.SizeOf(shinfo), flags);
                 if (hr != IntPtr.Zero)
@@ -105,9 +119,9 @@ namespace BetterStartPage.Converter
             return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         #region PInvoke
@@ -117,6 +131,7 @@ namespace BetterStartPage.Converter
         // ReSharper disable MemberCanBePrivate.Local
 
         private const uint SHGFI_ICON = 0x100;
+        private const uint SHGFI_SMALLICON = 0x1;
         private const uint SHGFI_SYSICONINDEX = 16384;
         private const uint SHGFI_USEFILEATTRIBUTES = 16;
 

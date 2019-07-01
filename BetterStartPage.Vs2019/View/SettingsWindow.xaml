@@ -45,14 +45,28 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0"
                Grid.Column="0">
+            Project Display Mode
+        </Label>
+
+        <ComboBox Grid.Row="0"
+                  Grid.Column="1"
+                  ItemsSource="{Binding ProjectDisplayModes}"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"
+                  SelectedValue="{Binding CurrentProjectDisplayMode}"
+                  />
+
+        <Label Grid.Row="1"
+               Grid.Column="0">
             Group Columns
         </Label>
         <Grid Width="50"
-              Grid.Row="0"
+              Grid.Row="1"
               Grid.Column="1"
               Margin="3">
             <Grid.RowDefinitions>
@@ -84,9 +98,9 @@
                 Command="{Binding DecreaseGroupColumnsCommand}" />
         </Grid>
 
-        <Label Grid.Row="1" Grid.Column="0">Project Columns</Label>
+        <Label Grid.Row="2" Grid.Column="0">Project Columns</Label>
         <Grid Width="50"
-              Grid.Row="1" Grid.Column="1"
+              Grid.Row="2" Grid.Column="1"
               Margin="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

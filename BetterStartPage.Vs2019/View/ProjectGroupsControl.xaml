@@ -132,6 +132,7 @@
                     <!-- Directory link -->
                     <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
                         <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                         <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="0.9" />
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -143,7 +144,9 @@
                         </Style.Triggers>
                     </Style>
 
-                    <Style x:Key="DirectoryLink" TargetType="Button">
+                    <Style x:Key="LargeDirectoryLink" TargetType="Button">
+                        <Setter Property="Grid.Column" Value="2" />
+                        <Setter Property="Grid.Row" Value="1" />
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
                         <Setter Property="Foreground"
@@ -159,6 +162,17 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                    </Style>
+
+                    <Style x:Key="SmallDirectoryLink" TargetType="Button" BasedOn="{StaticResource LargeDirectoryLink}">
+                        <Setter Property="Margin" Value="3,0,0,0" />
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="Grid.Column" Value="3" />
+                        <Setter Property="Grid.Row" Value="0" />
+                    </Style>
+
+                    <Style x:Key="MiniDirectoryLink" TargetType="Button" BasedOn="{StaticResource SmallDirectoryLink}">
+                        <Setter Property="Visibility" Value="Collapsed" />
                     </Style>
 
                     <Style x:Key="ProjectItemStyle" TargetType="Button"
@@ -185,6 +199,14 @@
                     <!-- General -->
                     <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
                     <converter:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+                    <converter:ProjectDisplayModeToIconSizeConverter x:Key="ProjectDisplayModeToIconSizeConverter"
+                                                                     LargeSize="24"
+                                                                     SmallSize="16"
+                                                                     MiniSize="16"/>
+                    <converter:ProjectDisplayModeToStyleConverter x:Key="ProjectDisplayModeToDirectoryLinkStyleConverter"
+                                                                     LargeStyle="{StaticResource LargeDirectoryLink}"
+                                                                     SmallStyle="{StaticResource SmallDirectoryLink}"
+                                                                     MiniStyle="{StaticResource MiniDirectoryLink}"/>
 
                     <!-- Edit Mode Styles -->
                     <DataTemplate x:Key="DropShadowTemplate">
@@ -462,6 +484,7 @@
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="8" />
+                                                            <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />
                                                         </Grid.ColumnDefinitions>
 
@@ -473,30 +496,35 @@
                                                         <Image
                                                             Grid.Row="0"
                                                             Grid.Column="0"
-                                                            Source="{Binding FullName, Converter={StaticResource PathToSystemIconConverter}}"
-                                                            Height="24"
-                                                            Width="24"
+                                                            Height="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToIconSizeConverter}}"
+                                                            Width="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToIconSizeConverter}}"
                                                             Grid.RowSpan="2"
                                                             VerticalAlignment="Center"
                                                             HorizontalAlignment="Center"
-                                                            SnapsToDevicePixels="True" />
+                                                            SnapsToDevicePixels="True">
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource PathToSystemIconConverter}">
+                                                                    <Binding Path="FullName" />
+                                                                    <Binding Path="DataContext.ShowSmallIcons" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
 
 
                                                         <TextBlock Grid.Column="2"
                                                                    Grid.Row="0"
                                                                    Text="{Binding Name}"
-                                                                   ToolTip="{Binding Name}"
+                                                                   ToolTip="{Binding FullName}"
                                                                    TextWrapping="NoWrap"
                                                                    TextTrimming="CharacterEllipsis"
                                                                    VerticalAlignment="Center"
-                                                                   Style="{DynamicResource {x:Static shell:VsResourceKeys.TextBlockEnvironment111PercentFontSizeStyleKey}}" />
+                                                                   Style="{DynamicResource {x:Static shell:VsResourceKeys.TextBlockEnvironment111PercentFontSizeStyleKey}}">
+                                                        </TextBlock>
 
 
                                                         <Button
-                                                            Grid.Column="2"
-                                                            Grid.Row="1"
-                                                            Style="{StaticResource DirectoryLink}"
                                                             ToolTip="{Binding DirectoryName}"
+                                                            Style="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToDirectoryLinkStyleConverter}}"
                                                             Command="{Binding DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                             CommandParameter="{Binding}">
                                                             <TextBlock Text="{Binding DirectoryName}"

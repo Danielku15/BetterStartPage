@@ -9,12 +9,18 @@ using System.Windows.Input;
 using BetterStartPage.Control.Settings;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
-using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.Win32;
 
 namespace BetterStartPage.Control.ViewModel
 {
+    internal enum ProjectDisplayModes
+    {
+        Large,
+        Small,
+        Mini
+    }
+
     internal class ProjectGroupsViewModel : ViewModelBase
     {
         private readonly IIdeAccess _ideAccess;
@@ -22,6 +28,7 @@ namespace BetterStartPage.Control.ViewModel
         private ObservableCollection<ProjectGroup> _groups;
         private readonly ISettingsProvider _settingsProvider;
         private int _projectColumns;
+        private ProjectDisplayModes _currentProjectDisplayMode;
 
         public int GroupColumns
         {
@@ -61,11 +68,38 @@ namespace BetterStartPage.Control.ViewModel
             }
         }
 
-        public bool IsEmpty
+        public bool IsEmpty => Groups.Count == 0;
+
+        public Dictionary<ProjectDisplayModes, string> ProjectDisplayModes { get; set; }
+
+        public ProjectDisplayModes CurrentProjectDisplayMode
         {
-            get { return Groups.Count == 0; }
+            get => _currentProjectDisplayMode;
+            set
+            {
+                if (_currentProjectDisplayMode == value) return;
+                _currentProjectDisplayMode = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowSmallIcons));
+            }
         }
-        
+
+        public bool ShowSmallIcons
+        {
+            get
+            {
+                switch (_currentProjectDisplayMode)
+                {
+                    case ViewModel.ProjectDisplayModes.Large:
+                        return false;
+                    case ViewModel.ProjectDisplayModes.Small:
+                    case ViewModel.ProjectDisplayModes.Mini:
+                    default:
+                        return true;
+                }
+            }
+        }
+
         public ICommand OpenProjectCommand { get; }
         public ICommand OpenDirectoryCommand { get; }
         public ICommand OpenAllFilesCommand { get; }
@@ -123,6 +157,13 @@ namespace BetterStartPage.Control.ViewModel
             ImportConfigurationCommand = new RelayCommand(ImportConfiguration);
             ShowSettingsCommand = new RelayCommand(ShowSettings);
 
+            ProjectDisplayModes = new Dictionary<ProjectDisplayModes, string>
+            {
+                [ViewModel.ProjectDisplayModes.Large] = "Large",
+                [ViewModel.ProjectDisplayModes.Small] = "Small",
+                [ViewModel.ProjectDisplayModes.Mini] = "Mini"
+            };
+
             Setup();
         }
 
@@ -145,6 +186,7 @@ namespace BetterStartPage.Control.ViewModel
                     Groups.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(IsEmpty));
                     GroupColumns = model.GroupColumns;
                     ProjectColumns = model.ProjectColumns;
+                    CurrentProjectDisplayMode = model.ProjectDisplayMode ?? ViewModel.ProjectDisplayModes.Large;
 
                     PersistSettings();
 
@@ -451,6 +493,8 @@ namespace BetterStartPage.Control.ViewModel
             Groups.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(IsEmpty));
             GroupColumns = _settingsProvider.ReadInt32("GroupColumns", 1);
             ProjectColumns = _settingsProvider.ReadInt32("ProjectColumns");
+
+            CurrentProjectDisplayMode = (ProjectDisplayModes)_settingsProvider.ReadInt32("ProjectDisplayMode");
         }
 
         private void PersistSettings()
@@ -468,6 +512,7 @@ namespace BetterStartPage.Control.ViewModel
 
             _settingsProvider.WriteInt32("GroupColumns", GroupColumns);
             _settingsProvider.WriteInt32("ProjectColumns", ProjectColumns);
+            _settingsProvider.WriteInt32("ProjectDisplayMode", (int)CurrentProjectDisplayMode);
         }
 
         #endregion

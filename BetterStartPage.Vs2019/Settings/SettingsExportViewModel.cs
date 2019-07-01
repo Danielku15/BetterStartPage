@@ -13,6 +13,8 @@ namespace BetterStartPage.Control.Settings
         public int GroupColumns { get; set; }
         [DataMember]
         public int ProjectColumns { get; set; }
+        [DataMember(IsRequired = false)]
+        public ProjectDisplayModes? ProjectDisplayMode { get; set; }
 
         public static SettingsExportViewModel Deserialize(byte[] raw)
         {
