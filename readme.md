@@ -12,6 +12,7 @@ Note: This is the Visual Studio 2019 version of BetterStartPage, the code compat
 - Adds a customizable project dashboard to the Visual Studio Quick Start Window
 - Adds a new menu item File > Open Favourite where the pinned projects can quickly be accessed
 - Makes the Visual Studio Quick Start Window resizable 
+- Choose between 3 different display modes for the solution items
 
 # Getting Started
 
