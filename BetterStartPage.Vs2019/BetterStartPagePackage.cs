@@ -67,10 +67,13 @@ namespace BetterStartPage
             try
             {
                 QuickStartWindow.DialogCreated += (s,e) => QuickStartWindow.Instance?.PatchDialog();
-                QuickStartWindow.Instance?.PatchDialog();
-                if (Application.Current.MainWindow != null)
+                if (QuickStartWindow.Instance == null)
                 {
                     showStartWindowCommand?.Invoke();
+                }
+                else
+                {
+                    QuickStartWindow.Instance?.PatchDialog();
                 }
             }
             catch (Exception e)
