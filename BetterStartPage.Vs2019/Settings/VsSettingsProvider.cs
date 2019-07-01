@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Settings;
 
@@ -18,12 +17,6 @@ namespace BetterStartPage.Settings
             _settingsStore = manager.GetWritableSettingsStore(SettingsScope.UserSettings);
         }
 
-        public void WriteString(string name, string value)
-        {
-            if (!EnsureCollection()) return;
-            _settingsStore.SetString(SettingsRootPrefix, name, value);
-        }
-
         private bool EnsureCollection()
         {
             if (_settingsStore == null) return false;
@@ -32,27 +25,6 @@ namespace BetterStartPage.Settings
                 _settingsStore.CreateCollection(SettingsRootPrefix);
             }
             return true;
-        }
-
-        public string ReadString(string name, string defaultValue = "")
-        {
-            if (_settingsStore == null) return defaultValue;
-            return _settingsStore.GetString(SettingsRootPrefix, name, defaultValue);
-        }
-
-        public void WriteBool(string name, bool value)
-        {
-            WriteInt32(name, value ? 1 : 0);
-        }
-
-        public bool ReadBool(string name, bool defaultValue = false)
-        {
-            int value = ReadInt32(name, -1);
-            if (value == -1)
-            {
-                return defaultValue;
-            }
-            return value != 0;
         }
 
         public void Reset()

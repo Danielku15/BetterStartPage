@@ -16,8 +16,8 @@ namespace BetterStartPage.View
 
         public DragDropEffects DefaultDropEffect
         {
-            get { return (DragDropEffects)GetValue(DefaultDropEffectProperty); }
-            set { SetValue(DefaultDropEffectProperty, value); }
+            get => (DragDropEffects)GetValue(DefaultDropEffectProperty);
+            set => SetValue(DefaultDropEffectProperty, value);
         }
 
         public static readonly DependencyProperty DataTemplateProperty = DependencyProperty.Register(
@@ -25,8 +25,8 @@ namespace BetterStartPage.View
 
         public DataTemplate DataTemplate
         {
-            get { return (DataTemplate)GetValue(DataTemplateProperty); }
-            set { SetValue(DataTemplateProperty, value); }
+            get => (DataTemplate)GetValue(DataTemplateProperty);
+            set => SetValue(DataTemplateProperty, value);
         }
 
         public static readonly DependencyProperty FilesDroppedCommandProperty = DependencyProperty.Register(
@@ -34,8 +34,8 @@ namespace BetterStartPage.View
 
         public ICommand FilesDroppedCommand
         {
-            get { return (ICommand)GetValue(FilesDroppedCommandProperty); }
-            set { SetValue(FilesDroppedCommandProperty, value); }
+            get => (ICommand)GetValue(FilesDroppedCommandProperty);
+            set => SetValue(FilesDroppedCommandProperty, value);
         }
 
         public static readonly DependencyProperty FilesDroppedCommandParameterProperty = DependencyProperty.Register(
@@ -43,8 +43,8 @@ namespace BetterStartPage.View
 
         public object FilesDroppedCommandParameter
         {
-            get { return GetValue(FilesDroppedCommandParameterProperty); }
-            set { SetValue(FilesDroppedCommandParameterProperty, value); }
+            get => GetValue(FilesDroppedCommandParameterProperty);
+            set => SetValue(FilesDroppedCommandParameterProperty, value);
         }
 
         public GridFileDragAndDropDecorator()
@@ -52,14 +52,7 @@ namespace BetterStartPage.View
             Loaded += OnLoaded;
         }
 
-        protected UIElement DecoratedUIElement
-        {
-            get
-            {
-                var decorator = Child as GridFileDragAndDropDecorator;
-                return decorator != null ? decorator.DecoratedUIElement : Child;
-            }
-        }
+        protected UIElement DecoratedUIElement => Child is GridFileDragAndDropDecorator decorator ? decorator.DecoratedUIElement : Child;
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -89,7 +82,9 @@ namespace BetterStartPage.View
 
         private void OnPreviewDragEnter(object sender, DragEventArgs e)
         {
-            if (!AllowDrop) return; var grid = (Grid)sender;
+            if (!AllowDrop) return;
+
+            var grid = (Grid)sender;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var data = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -97,8 +92,9 @@ namespace BetterStartPage.View
             }
             else if (e.Data.GetDataPresent(DataFormats.Text))
             {
-                var data = e.Data.GetData(DataFormats.Text).ToString()
-                                    .Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                var data = e.Data.GetData(DataFormats.Text)
+                    ?.ToString()
+                    .Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 InitializeDragAdorner(grid, data);
             }
             e.Handled = true;
@@ -158,15 +154,11 @@ namespace BetterStartPage.View
 
         private void InitializeDragAdorner(Grid grid, object dragData)
         {
-            if (DataTemplate != null)
-            {
-                if (_itemAdorner == null)
-                {
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(grid);
-                    _itemAdorner = new DragAdorner(dragData, DataTemplate,
-                        grid, adornerLayer);
-                }
-            }
+            if (DataTemplate == null || dragData == null || _itemAdorner != null) return;
+
+            var adornerLayer = AdornerLayer.GetAdornerLayer(grid);
+            _itemAdorner = new DragAdorner(dragData, DataTemplate,
+                grid, adornerLayer);
         }
 
         private void DetachDragAdorner()

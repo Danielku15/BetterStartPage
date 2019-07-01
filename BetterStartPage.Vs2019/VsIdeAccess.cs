@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using BetterStartPage.Control.ViewModel;
 using BetterStartPage.View;
-using BetterStartPage.Vs2019;
 using EnvDTE80;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
@@ -82,8 +81,7 @@ namespace BetterStartPage
 
         private void AddToProjectMRUList(string fullPath)
         {
-            object vaOut;
-            ProjectMRUList.Invoke(MruListDataSourceSchema.AddCommandName, fullPath, out vaOut);
+            ProjectMRUList.Invoke(MruListDataSourceSchema.AddCommandName, fullPath, out _);
         }
 
         #endregion
@@ -142,7 +140,8 @@ namespace BetterStartPage
         {
             var vm = new ProjectRenameViewModel
             {
-                Title = "New Group"
+                Title = "New Group",
+                ButtonTitle = "Create"
             };
             var wnd = new ProjectRenameWindow { DataContext = vm };
             if (wnd.ShowDialog().GetValueOrDefault())

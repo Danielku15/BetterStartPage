@@ -57,11 +57,12 @@
     <Compile Include="Converter\PathToSystemIconConverter.cs" />
     <Compile Include="IIdeAccess.cs" />
     <Compile Include="Ioc.cs" />
-    <Compile Include="View\DropDownButtonMenu.cs" />
+    <Compile Include="View\DropDownButtonMenuBehavior.cs" />
     <Compile Include="View\ProjectGroupsControl.xaml.cs">
       <DependentUpon>ProjectGroupsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectGroupsMenu.cs" />
+    <Compile Include="View\RootObject.cs" />
     <Compile Include="View\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -72,7 +73,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BetterStartPagePackage.cs" />
     <Compile Include="View\QuickStartWindowWrapper.cs" />
-    <Compile Include="Settings\DummySettingsProvider.cs" />
     <Compile Include="Settings\ISettingsProvider.cs" />
     <Compile Include="Settings\SettingsExportViewModel.cs" />
     <Compile Include="Settings\VsSettingsProvider.cs" />
@@ -87,10 +87,8 @@
     <Compile Include="View\DragAdorner.cs" />
     <Compile Include="View\FilesDroppedEventArgs.cs" />
     <Compile Include="View\GridFileDragAndDropDecorator.cs" />
-    <Compile Include="View\ImageButton.cs" />
     <Compile Include="View\RelativeFontSizeHelper.cs" />
     <Compile Include="VsIdeAccess.cs" />
-    <Compile Include="VsResources.cs" />
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="BetterStartPagePackage.vsct">

@@ -14,6 +14,6 @@
             <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         <TextBox Grid.Column="0" Margin="3" Text="{Binding ProjectName}" VerticalContentAlignment="Center" Name="ProjectNameTextBox" />
-        <Button Grid.Column="1" Margin="3" Padding="5" Click="OnRenameClick">Rename</Button>
+        <Button Grid.Column="1" Margin="3" Padding="5" Click="OnRenameClick" Content="{Binding ButtonTitle}" />
     </Grid>
 </Window>

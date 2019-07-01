@@ -42,16 +42,6 @@ namespace BetterStartPage
             _registrations[interfaceType] = classType;
         }
 
-        public void Unregister<TClass>()
-        {
-            Unregister(typeof(TClass));
-        }
-
-        private void Unregister(Type type)
-        {
-            _registrations.Remove(type);
-        }
-
         public TClass Resolve<TClass>()
         {
             return (TClass)Resolve(typeof(TClass));

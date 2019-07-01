@@ -117,7 +117,6 @@ namespace BetterStartPage.Converter
         // ReSharper disable MemberCanBePrivate.Local
 
         private const uint SHGFI_ICON = 0x100;
-        private const uint SHGFI_SMALLICON = 0x1;
         private const uint SHGFI_SYSICONINDEX = 16384;
         private const uint SHGFI_USEFILEATTRIBUTES = 16;
 

@@ -48,6 +48,7 @@
         public ProjectRenameViewModel(string projectName)
         {
             Title = "Rename Project";
+            ButtonTitle = "Rename";
             _projectName = projectName;
         }
     }

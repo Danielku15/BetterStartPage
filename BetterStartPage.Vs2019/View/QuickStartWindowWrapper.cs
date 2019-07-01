@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows;
@@ -7,12 +6,11 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using BetterStartPage.Settings;
-using BetterStartPage.View;
 using Microsoft.VisualStudio.PlatformUI.GetToCode;
 using Expression = System.Linq.Expressions.Expression;
 using Application = System.Windows.Application;
 
-namespace BetterStartPage.Vs2019
+namespace BetterStartPage.View
 {
     class QuickStartWindow
     {
@@ -106,6 +104,7 @@ namespace BetterStartPage.Vs2019
             _instance.ResizeMode = ResizeMode.CanResize;
             _instance.WindowState = WindowState.Normal;
             _instance.SizeToContent = SizeToContent.Manual;
+            _instance.BorderThickness = new Thickness(0);
 
             var settingsProvider = Ioc.Instance.Resolve<ISettingsProvider>();
 
@@ -138,7 +137,7 @@ namespace BetterStartPage.Vs2019
             }
 
             var mainWindow = Application.Current?.MainWindow;
-            if (mainWindow != null)
+            if (mainWindow != null && mainWindow != _instance && mainWindow.Visibility == Visibility.Visible)
             {
                 _instance.Left = mainWindow.Left + (mainWindow.ActualWidth - _instance.Width) / 2;
                 _instance.Top = mainWindow.Top + (mainWindow.ActualHeight - _instance.Height) / 2;

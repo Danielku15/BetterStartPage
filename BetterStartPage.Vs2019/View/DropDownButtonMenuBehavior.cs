@@ -4,10 +4,10 @@ using System.Windows.Controls.Primitives;
 
 namespace BetterStartPage.View
 {
-    class DropDownButtonMenu
+    class DropDownButtonMenuBehavior
     {
         public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
-            "IsEnabled", typeof(bool), typeof(DropDownButtonMenu), new PropertyMetadata(default(bool), OnIsEnabledChanged));
+            "IsEnabled", typeof(bool), typeof(DropDownButtonMenuBehavior), new PropertyMetadata(default(bool), OnIsEnabledChanged));
 
         private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -40,6 +40,7 @@ namespace BetterStartPage.View
             element.SetValue(IsEnabledProperty, value);
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static bool GetIsEnabled(DependencyObject element)
         {
             return (bool)element.GetValue(IsEnabledProperty);

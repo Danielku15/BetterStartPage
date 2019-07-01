@@ -9,7 +9,6 @@ using System.Windows.Input;
 using BetterStartPage.Control.Settings;
 using BetterStartPage.Settings;
 using BetterStartPage.View;
-using BetterStartPage.Vs2019;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.Win32;

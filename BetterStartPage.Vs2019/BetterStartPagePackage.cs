@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using BetterStartPage.Control.ViewModel;
 using BetterStartPage.Settings;
-using BetterStartPage.Vs2019;
+using BetterStartPage.View;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
