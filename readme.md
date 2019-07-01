@@ -5,6 +5,8 @@ In the project dashboard you can organize your solutions and projects into diffe
 
 ![Screenshot](https://github.com/Danielku15/BetterStartPage/blob/master/BetterStartPage/startpagepreview.png?raw=1 "Screenshot")
 
+Note: This is the Visual Studio 2019 version of BetterStartPage, the code compatible with old versions can be found in the [pre2019](https://github.com/Danielku15/BetterStartPage/tree/pre2019) branch. 
+
 ## Features
 
 - Adds a customizable project dashboard to the Visual Studio Quick Start Window
