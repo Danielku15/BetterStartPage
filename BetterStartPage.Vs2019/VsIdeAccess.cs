@@ -122,6 +122,38 @@ namespace BetterStartPage
             return false;
         }
 
+        public bool ShowGroupRenameDialog(string name, out string newName)
+        {
+            newName = null;
+            var vm = new ProjectRenameViewModel(name)
+            {
+                Title = "Rename Group"
+            };
+            var wnd = new ProjectRenameWindow { DataContext = vm };
+            if (wnd.ShowDialog().GetValueOrDefault())
+            {
+                newName = vm.ProjectName;
+                return true;
+            }
+            return false;
+        }
+
+        public bool ShowNewGroupDialog(out string name)
+        {
+            var vm = new ProjectRenameViewModel
+            {
+                Title = "New Group"
+            };
+            var wnd = new ProjectRenameWindow { DataContext = vm };
+            if (wnd.ShowDialog().GetValueOrDefault())
+            {
+                name = vm.ProjectName;
+                return true;
+            }
+            name = null;
+            return false;
+        }
+
         public bool ShowMissingFileDialog(string fullName)
         {
             return MessageBox.Show(

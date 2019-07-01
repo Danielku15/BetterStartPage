@@ -3,6 +3,8 @@
     internal class ProjectRenameViewModel : ViewModelBase
     {
         private string _projectName;
+        private string _title;
+        private string _buttonTitle;
 
         public string ProjectName
         {
@@ -15,12 +17,37 @@
             }
         }
 
-        public ProjectRenameViewModel()
+        public string Title
         {
+            get => _title;
+            set
+            {
+                if (value == _title) return;
+                _title = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ButtonTitle
+        {
+            get => _buttonTitle;
+            set
+            {
+                if (value == _buttonTitle) return;
+                _buttonTitle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ProjectRenameViewModel()
+        : this(string.Empty)
+        {
+
         }
 
         public ProjectRenameViewModel(string projectName)
         {
+            Title = "Rename Project";
             _projectName = projectName;
         }
     }

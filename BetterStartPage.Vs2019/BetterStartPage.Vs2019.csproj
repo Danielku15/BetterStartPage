@@ -62,6 +62,9 @@
       <DependentUpon>ProjectGroupsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectGroupsMenu.cs" />
+    <Compile Include="View\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProjectRenameWindow.xaml.cs">
       <DependentUpon>ProjectRenameWindow.xaml</DependentUpon>
     </Compile>
@@ -128,6 +131,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="View\ProjectGroupsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SettingsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

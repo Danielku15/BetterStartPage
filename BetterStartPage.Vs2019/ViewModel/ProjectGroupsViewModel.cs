@@ -19,7 +19,6 @@ namespace BetterStartPage.ViewModel
         private readonly IIdeAccess _ideAccess;
         private int _groupColumns;
         private ObservableCollection<ProjectGroup> _groups;
-        private bool _isEditMode;
         private readonly ISettingsProvider _settingsProvider;
         private int _projectColumns;
 
@@ -32,6 +31,7 @@ namespace BetterStartPage.ViewModel
                 _groupColumns = Math.Max(1, value);
                 ((RelayCommand)DecreaseGroupColumnsCommand).RaiseCanExecuteChanged();
                 OnPropertyChanged();
+                PersistSettings();
             }
         }
 
@@ -44,6 +44,7 @@ namespace BetterStartPage.ViewModel
                 _projectColumns = Math.Max(0, value);
                 ((RelayCommand)DecreaseProjectColumnsCommand).RaiseCanExecuteChanged();
                 OnPropertyChanged();
+                PersistSettings();
             }
         }
 
@@ -63,27 +64,13 @@ namespace BetterStartPage.ViewModel
         {
             get { return Groups.Count == 0; }
         }
-
-        public bool IsEditMode
-        {
-            get { return _isEditMode; }
-            set
-            {
-                if (value.Equals(_isEditMode)) return;
-                _isEditMode = value;
-                OnPropertyChanged();
-                if (!IsEditMode)
-                {
-                    PersistSettings();
-                }
-            }
-        }
-
+        
         public ICommand OpenProjectCommand { get; }
         public ICommand OpenDirectoryCommand { get; }
         public ICommand OpenAllFilesCommand { get; }
 
         public ICommand AddGroupCommand { get; }
+        public ICommand RenameGroupCommand { get; }
         public ICommand DeleteGroupCommand { get; }
         public ICommand MoveGroupUpCommand { get; }
         public ICommand MoveGroupDownCommand { get; }
@@ -102,6 +89,7 @@ namespace BetterStartPage.ViewModel
 
         public ICommand ExportConfigurationCommand { get; }
         public ICommand ImportConfigurationCommand { get; }
+        public ICommand ShowSettingsCommand { get; }
 
         public ProjectGroupsViewModel(IIdeAccess ideAccess, ISettingsProvider settingsProvider)
         {
@@ -112,6 +100,7 @@ namespace BetterStartPage.ViewModel
             OpenDirectoryCommand = new RelayCommand<Project>(OpenDirectory);
             OpenAllFilesCommand = new RelayCommand<ProjectGroup>(OpenAllFiles);
             AddGroupCommand = new RelayCommand(NewGroup);
+            RenameGroupCommand = new RelayCommand<ProjectGroup>(RenameGroup);
             DeleteGroupCommand = new RelayCommand<ProjectGroup>(DeleteGroup);
             MoveGroupUpCommand = new RelayCommand<ProjectGroup>(MoveGroupUp);
             MoveGroupDownCommand = new RelayCommand<ProjectGroup>(MoveGroupDown);
@@ -131,8 +120,16 @@ namespace BetterStartPage.ViewModel
 
             ExportConfigurationCommand = new RelayCommand(ExportConfiguration);
             ImportConfigurationCommand = new RelayCommand(ImportConfiguration);
+            ShowSettingsCommand = new RelayCommand(ShowSettings);
 
             Setup();
+        }
+
+        private void ShowSettings()
+        {
+            var dlg = new SettingsWindow();
+            dlg.DataContext = this;
+            dlg.ShowDialog();
         }
 
         private void ImportConfiguration()
@@ -267,6 +264,8 @@ namespace BetterStartPage.ViewModel
             {
                 groupProjects.Add(project);
             }
+
+            PersistSettings();
         }
 
         private bool IsSupportedUri(string s)
@@ -297,6 +296,8 @@ namespace BetterStartPage.ViewModel
             if (index == -1) return;
 
             MoveGroup((IList<Project>)group.Projects, index, up);
+
+            PersistSettings();
         }
 
         private void RenameProject(Project project)
@@ -304,11 +305,12 @@ namespace BetterStartPage.ViewModel
             ProjectGroup group = GetGroupOfProject(project);
             if (group == null) return;
 
-            string newName;
-            if (_ideAccess.ShowProjectRenameDialog(project.Name, out newName))
+            if (_ideAccess.ShowProjectRenameDialog(project.Name, out var newName))
             {
                 project.CustomName = newName;
             }
+
+            PersistSettings();
         }
 
         private void DeleteProject(Project project)
@@ -325,10 +327,7 @@ namespace BetterStartPage.ViewModel
             ProjectGroup group = GetGroupOfProject(project);
             if (group == null) return;
             ((IList<Project>)group.Projects).Remove(project);
-            if (!IsEditMode)
-            {
-                PersistSettings();
-            }
+            PersistSettings();
         }
 
         #endregion
@@ -337,11 +336,15 @@ namespace BetterStartPage.ViewModel
 
         private void NewGroup()
         {
-            Groups.Add(new ProjectGroup
+            if (_ideAccess.ShowNewGroupDialog(out var name))
             {
-                Title = "New Group",
-                Projects = new ObservableCollection<Project>()
-            });
+
+                Groups.Add(new ProjectGroup
+                {
+                    Title = name,
+                    Projects = new ObservableCollection<Project>()
+                });
+            }
         }
 
         private void AddProjectsToGroup(ProjectGroup group)
@@ -381,14 +384,23 @@ namespace BetterStartPage.ViewModel
             {
                 _groups.Remove(group);
             }
+
+            PersistSettings();
+        }
+
+        private void RenameGroup(ProjectGroup group)
+        {
+            if (_ideAccess.ShowGroupRenameDialog(group.Title, out var newTitle))
+            {
+                group.Title = newTitle;
+            }
+            PersistSettings();
         }
 
         #endregion
 
         private void MoveGroup<T>(IList<T> list, int indexToMove, bool up)
         {
-            if (list.Count == 1) return;
-
             if (up)
             {
                 if (indexToMove == 0) return;
@@ -399,7 +411,7 @@ namespace BetterStartPage.ViewModel
             }
             else
             {
-                if (indexToMove == _groups.Count - 1) return;
+                if (indexToMove == list.Count - 1) return;
 
                 var old = list[indexToMove + 1];
                 list[indexToMove + 1] = list[indexToMove];
