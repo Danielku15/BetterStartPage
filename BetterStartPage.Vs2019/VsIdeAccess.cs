@@ -28,7 +28,11 @@ namespace BetterStartPage
             {
                 if (QuickStartWindow.Instance != null)
                 {
-                    QuickStartWindow.Instance.CompleteWorkflow(() => { InternalOpenProject(name); });
+                    QuickStartWindow.Instance.CompleteWorkflow(() =>
+                    {
+                        ThreadHelper.ThrowIfNotOnUIThread();
+                        InternalOpenProject(name);
+                    });
                 }
                 else
                 {
@@ -39,6 +43,7 @@ namespace BetterStartPage
 
         private void InternalOpenProject(string name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var solution = (IVsSolution)Package.GetGlobalService(typeof(IVsSolution));
             if (name.EndsWith(".sln"))
             {
@@ -69,6 +74,7 @@ namespace BetterStartPage
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
                 if (_projectMruList == null)
                 {
                     var dataSourceFactory = (IVsDataSourceFactory)Package.GetGlobalService(typeof(SVsDataSourceFactory));
@@ -81,6 +87,7 @@ namespace BetterStartPage
 
         private void AddToProjectMRUList(string fullPath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             ProjectMRUList.Invoke(MruListDataSourceSchema.AddCommandName, fullPath, out _);
         }
 
