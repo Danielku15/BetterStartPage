@@ -1,0 +1,19 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BetterStartPage.View.ProjectRenameWindow"
+        Title="{Binding Title}" 
+        Width="500"
+        SizeToContent="Height" 
+        Loaded="OnWindowLoaded"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow" 
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Column="0" Margin="3" Text="{Binding ProjectName}" VerticalContentAlignment="Center" Name="ProjectNameTextBox" />
+        <Button Grid.Column="1" Margin="3" Padding="5" Click="OnRenameClick" Content="{Binding ButtonTitle}" />
+    </Grid>
+</Window>

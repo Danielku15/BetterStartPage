@@ -1,0 +1,558 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:BetterStartPage.Control.ViewModel"
+    xmlns:converter="clr-namespace:BetterStartPage.Converter"
+    xmlns:view="clr-namespace:BetterStartPage.View"
+    xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    xmlns:shell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+    x:Class="BetterStartPage.View.ProjectGroupsControl"
+    d:DataContext="{d:DesignInstance viewModel:ProjectGroupsViewModel}"
+    d:DesignHeight="400"
+    d:DesignWidth="400"
+    Background="Transparent"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="/Microsoft.VisualStudio.Shell.15.0;component/UI/Styles/startpageresources.xaml" />
+                <ResourceDictionary>
+                    <converter:ContentToVisibilityConverter x:Key="ContentToVisibilityConverter" />
+
+                    <Geometry x:Key="DeleteIcon">M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z</Geometry>
+                    <Geometry x:Key="RenameIcon">M17,7H22V17H17V19A1,1 0 0,0 18,20H20V22H17.5C16.95,22 16,21.55 16,21C16,21.55 15.05,22 14.5,22H12V20H14A1,1 0 0,0 15,19V5A1,1 0 0,0 14,4H12V2H14.5C15.05,2 16,2.45 16,3C16,2.45 16.95,2 17.5,2H20V4H18A1,1 0 0,0 17,5V7M2,7H13V9H4V15H13V17H2V7M20,15V9H17V15H20Z</Geometry>
+                    <Geometry x:Key="MoveUpIcon">M12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22M12,7L7,12H10V16H14V12H17L12,7Z</Geometry>
+                    <Geometry x:Key="MoveDownIcon">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,17L17,12H14V8H10V12H7L12,17Z</Geometry>
+                    <Geometry x:Key="AddProjectIcon">M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z</Geometry>
+                    <Geometry x:Key="DotsIcon">M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z</Geometry>
+
+                    <!-- Link Buttons -->
+                    <Style x:Key="LinkTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static shell:VsBrushes.StartPageTextControlLinkSelectedKey}}" />
+                        <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="1.1" />
+                        <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="ActionButton" TargetType="{x:Type Button}">
+                        <Setter Property="Background"
+                                Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonBackgroundBrushKey}}" />
+                        <Setter Property="Foreground"
+                                Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonTextBrushKey}}" />
+                        <Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonStrokeBrushKey}}" />
+                        <Setter Property="Margin" Value="2" />
+                        <Setter Property="Padding" Value="3" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ListItemMouseOverBrushKey}}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ListItemMouseOverTextBrushKey}}" />
+                                <Setter Property="BorderBrush"
+                                        Value="{DynamicResource {x:Static vs:ThemedDialogColors.ActionButtonStrokeHoverBrushKey}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="MenuButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ActionButton}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground"
+                                Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemBrushKey}}" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Visibility" Value="Hidden" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border SnapsToDevicePixels="true"
+                                            Background="{TemplateBinding Control.Background}"
+                                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                                            Padding="{TemplateBinding Padding}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Viewbox Width="16" Height="16">
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </Viewbox>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemHoverBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedBrushKey}}" />
+                            </Trigger>
+                            <DataTrigger
+                                Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver}"
+                                Value="true">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style TargetType="Path">
+                        <Setter Property="Fill"
+                                Value="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" />
+                    </Style>
+
+                    <Style x:Key="LinkButton" TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock
+                                        x:Name="PART_Text"
+                                        Margin="8,0,0,0"
+                                        Style="{StaticResource LinkTextStyle}"
+                                        Visibility="{TemplateBinding Content, Converter={StaticResource ContentToVisibilityConverter}}"
+                                        TextWrapping="NoWrap">
+                                        <ContentPresenter Content="{TemplateBinding Content}" />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Directory link -->
+                    <Style x:Key="DirectoryLinkTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                        <Setter Property="view:RelativeFontSizeHelper.FontSizeScale" Value="0.9" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="LargeDirectoryLink" TargetType="Button">
+                        <Setter Property="Grid.Column" Value="2" />
+                        <Setter Property="Grid.Row" Value="1" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Cursor" Value="{x:Static Cursors.Hand}" />
+                        <Setter Property="Foreground"
+                                Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemTextBrushKey}}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <TextBlock
+                                        x:Name="PART_Text"
+                                        Style="{StaticResource DirectoryLinkTextStyle}">
+                                        <ContentPresenter Content="{TemplateBinding Content}" />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="SmallDirectoryLink" TargetType="Button" BasedOn="{StaticResource LargeDirectoryLink}">
+                        <Setter Property="Margin" Value="3,0,0,0" />
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="Grid.Column" Value="3" />
+                        <Setter Property="Grid.Row" Value="0" />
+                    </Style>
+
+                    <Style x:Key="MiniDirectoryLink" TargetType="Button" BasedOn="{StaticResource SmallDirectoryLink}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+
+                    <Style x:Key="ProjectItemStyle" TargetType="Button"
+                           BasedOn="{StaticResource StartPageMRUItemStyleKey}">
+                        <Style.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                                <Setter Property="FrameworkElement.Cursor" Value="Hand" />
+                                <Setter Property="Control.Background"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemHoverBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="ButtonBase.IsPressed" Value="True">
+                                <Setter Property="TextBlock.Foreground"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Button.Foreground"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Control.Foreground"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedTextBrushKey}}" />
+                                <Setter Property="Control.Background"
+                                        Value="{DynamicResource {x:Static vs:StartPageColors.StartPageListItemPressedBrushKey}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <!-- General -->
+                    <converter:PathToSystemIconConverter x:Key="PathToSystemIconConverter" />
+                    <converter:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+                    <converter:ProjectDisplayModeToIconSizeConverter x:Key="ProjectDisplayModeToIconSizeConverter"
+                                                                     LargeSize="24"
+                                                                     SmallSize="16"
+                                                                     MiniSize="16"/>
+                    <converter:ProjectDisplayModeToStyleConverter x:Key="ProjectDisplayModeToDirectoryLinkStyleConverter"
+                                                                     LargeStyle="{StaticResource LargeDirectoryLink}"
+                                                                     SmallStyle="{StaticResource SmallDirectoryLink}"
+                                                                     MiniStyle="{StaticResource MiniDirectoryLink}"/>
+
+                    <!-- Edit Mode Styles -->
+                    <DataTemplate x:Key="DropShadowTemplate">
+                        <Grid Background="#32000000" />
+                    </DataTemplate>
+
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="Add New Group"
+                Command="{Binding AddGroupCommand}" />
+            <Separator />
+            <MenuItem
+                Header="Settings"
+                Command="{Binding ShowSettingsCommand}" />
+            <MenuItem
+                Header="Export Configuration"
+                Command="{Binding ExportConfigurationCommand}" />
+            <MenuItem
+                Header="Import Configuration"
+                Command="{Binding ImportConfigurationCommand}" />
+        </ContextMenu>
+    </UserControl.ContextMenu>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Groups Container -->
+        <ScrollViewer Style="{DynamicResource NonGradientScrollViewerStyle}">
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.Template>
+                    <ControlTemplate>
+                        <view:AutoGrid
+                            IsItemsHost="True"
+                            Columns="{Binding GroupColumns}" />
+                    </ControlTemplate>
+                </ItemsControl.Template>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="viewModel:ProjectGroup">
+                        <!-- Single Group -->
+                        <view:GridFileDragAndDropDecorator
+                            HorizontalAlignment="Stretch"
+                            AllowDrop="true"
+                            DataTemplate="{StaticResource DropShadowTemplate}"
+                            DefaultDropEffect="Link"
+                            FilesDroppedCommand="{Binding DataContext.AddProjectsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            FilesDroppedCommandParameter="{Binding}">
+
+                            <Grid HorizontalAlignment="Stretch" Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    FontSize="{DynamicResource {x:Static shell:VsFonts.Environment133PercentFontSizeKey}}"
+                                    FontStyle="Italic"
+                                    Margin="0, 5"
+                                    Text="{Binding Title}" />
+
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Style="{StaticResource LinkButton}"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding DataContext.OpenAllFilesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    Content="Open all files"
+                                    Margin="5"
+                                    Visibility="{Binding HasNormalFiles, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Style="{StaticResource MenuButton}"
+                                    ToolTip="Show Options"
+                                    view:DropDownButtonMenuBehavior.IsEnabled="true">
+                                    <Button.ContextMenu>
+                                        <ContextMenu x:Name="MainContextMenu"
+                                                     PlacementRectangle="{Binding RelativeSource={RelativeSource Self}}">
+                                            <ContextMenu.Resources>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Fill"
+                                                            Value="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" />
+                                                </Style>
+                                            </ContextMenu.Resources>
+
+                                            <MenuItem Header="{Binding Title}" IsEnabled="False" />
+
+                                            <Separator />
+
+                                            <MenuItem Header="Add projects to group"
+                                                      Command="{Binding DataContext.AddProjectsToGroupCommand, Source={view:RootObject}}"
+                                                      CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource AddProjectIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <MenuItem Header="Rename group"
+                                                      Command="{Binding DataContext.RenameGroupCommand, Source={view:RootObject}}"
+                                                      CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource RenameIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <MenuItem Header="Remove group"
+                                                      Command="{Binding DataContext.DeleteGroupCommand, Source={view:RootObject}}"
+                                                      CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource DeleteIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+                                            <Separator />
+
+                                            <MenuItem Header="Move group up"
+                                                      Command="{Binding DataContext.MoveGroupUpCommand, Source={view:RootObject}}"
+                                                      CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource MoveUpIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
+
+                                            <MenuItem Header="Move group down"
+                                                      Command="{Binding DataContext.MoveGroupDownCommand, Source={view:RootObject}}"
+                                                      CommandParameter="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource MoveDownIcon}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                    <Canvas Width="24" Height="24">
+                                        <Path Data="{StaticResource DotsIcon}"
+                                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" />
+                                    </Canvas>
+                                </Button>
+
+                                <!-- Solution list -->
+                                <ItemsControl
+                                    Name="Projects"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    ItemsSource="{Binding Projects}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <view:AutoGrid
+                                                IsItemsHost="True"
+                                                Columns="{Binding DataContext.ProjectColumns, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="viewModel:Project">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Normal display of solution item  -->
+                                                <Button Style="{StaticResource ProjectItemStyle}"
+                                                        Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}">
+
+                                                    <Button.ContextMenu>
+                                                        <ContextMenu>
+                                                            <ContextMenu.Resources>
+                                                                <Style TargetType="Path">
+                                                                    <Setter Property="Fill"
+                                                                            Value="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" />
+                                                                </Style>
+                                                            </ContextMenu.Resources>
+
+                                                            <MenuItem Header="{Binding Name}" IsEnabled="False" />
+
+                                                            <Separator />
+
+                                                            <MenuItem Header="Rename project"
+                                                                      Command="{Binding DataContext.RenameProjectCommand, Source={view:RootObject}}"
+                                                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource RenameIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                            <MenuItem Header="Remove project"
+                                                                      Command="{Binding DataContext.DeleteProjectCommand, Source={view:RootObject}}"
+                                                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource DeleteIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                            <Separator />
+
+                                                            <MenuItem Header="Move project up"
+                                                                      Command="{Binding DataContext.MoveProjectUpCommand, Source={view:RootObject}}"
+                                                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource MoveUpIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+
+                                                            <MenuItem Header="Move project down"
+                                                                      Command="{Binding DataContext.MoveProjectDownCommand, Source={view:RootObject}}"
+                                                                      CommandParameter="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Viewbox Width="16" Height="16">
+                                                                        <Canvas Width="24" Height="24">
+                                                                            <Path Data="{StaticResource MoveDownIcon}" />
+                                                                        </Canvas>
+                                                                    </Viewbox>
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+
+                                                        </ContextMenu>
+                                                    </Button.ContextMenu>
+
+                                                    <Grid Margin="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="8" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <Image
+                                                            Grid.Row="0"
+                                                            Grid.Column="0"
+                                                            Height="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToIconSizeConverter}}"
+                                                            Width="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToIconSizeConverter}}"
+                                                            Grid.RowSpan="2"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Center"
+                                                            SnapsToDevicePixels="True">
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource PathToSystemIconConverter}">
+                                                                    <Binding Path="FullName" />
+                                                                    <Binding Path="DataContext.ShowSmallIcons" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+
+
+                                                        <TextBlock Grid.Column="2"
+                                                                   Grid.Row="0"
+                                                                   Text="{Binding Name}"
+                                                                   ToolTip="{Binding FullName}"
+                                                                   TextWrapping="NoWrap"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"
+                                                                   Style="{DynamicResource {x:Static shell:VsResourceKeys.TextBlockEnvironment111PercentFontSizeStyleKey}}">
+                                                        </TextBlock>
+
+
+                                                        <Button
+                                                            ToolTip="{Binding DirectoryName}"
+                                                            Style="{Binding DataContext.CurrentProjectDisplayMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ProjectDisplayModeToDirectoryLinkStyleConverter}}"
+                                                            Command="{Binding DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                            <TextBlock Text="{Binding DirectoryName}"
+                                                                       TextWrapping="NoWrap"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                        </Button>
+
+                                                    </Grid>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </Grid>
+                        </view:GridFileDragAndDropDecorator>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Empty Info -->
+        <Border Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}"
+                Height="100">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">
+                No favourites configured. Right click here to create your first group.
+            </TextBlock>
+        </Border>
+
+    </Grid>
+</UserControl>
